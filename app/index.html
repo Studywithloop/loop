@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>loop. app</title>
+<meta name="description" content="loop. MVP: swipe to learn, swipe to test, swipe to reinforce.">
+<meta name="theme-color" content="#0D0D0F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%237A3CF0'/%3E%3Cpath d='M12 32c0-5 4-9 9-9 9 0 13 18 22 18 5 0 9-4 9-9s-4-9-9-9c-9 0-13 18-22 18-5 0-9-4-9-9z' fill='none' stroke='%23F4F2F6' stroke-width='6'/%3E%3Crect x='50' y='44' width='7' height='7' rx='1.5' fill='%23F4F2F6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,700..800&display=swap">
+<style>
+/* Layout: a home screen with three ways in, then a full-screen vertical feed of snap cards (TikTok-style). */
+:root{
+  --black:#0D0D0F; --black-2:#1C1A22; --black-3:#2E2B36; --white:#F4F2F6; --paper:#FFFFFF;
+  --violet:#7A3CF0; --violet-dark:#5E25D1; --lavender:#DCD0F7; --lavender-2:#ECE6FB;
+  --grey:#625E6C; --grey-light:#B7B2C2; --line:#E3DFEA; --ok:#1E8A55; --bad:#C2372B;
+  --font:'Plus Jakarta Sans','Helvetica Neue',Arial,sans-serif;
+  --gl:max(16px, env(safe-area-inset-left, 0px)); --gr:max(16px, env(safe-area-inset-right, 0px));
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--black);color:var(--white);font-family:var(--font);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{letter-spacing:-.04em;line-height:1;text-wrap:balance}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--violet);outline-offset:3px;border-radius:10px}
+.wm{font-weight:800;letter-spacing:-.06em;line-height:1;white-space:nowrap;text-decoration:none}
+.wm i{display:inline-block;width:.2em;height:.2em;margin-left:.05em;background:var(--violet);border-radius:.035em}
+.dot{color:var(--violet)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 24px;font:italic 800 17px/1 var(--font);letter-spacing:-.02em;text-decoration:none;transition:transform .15s ease}
+.btn:active{transform:scale(.97)}
+.btn-violet{background:var(--violet);color:#FFFFFF}
+.btn-white{background:var(--paper);color:var(--black)}
+.btn-ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 2px currentColor}
+.kicker{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+
+/* home */
+.home{min-height:100%;padding:calc(env(safe-area-inset-top,0px) + 24px) var(--gr) 40px var(--gl);max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.home header{display:flex;justify-content:space-between;align-items:center}
+.home header .wm{font-size:34px}
+.home header a{font-size:14px;color:var(--grey-light)}
+.home h1{font-style:italic;font-weight:800;font-size:44px;line-height:.95;margin-top:8px}
+.home .lede{color:#C9C5D2}
+.choice{display:grid;gap:8px;text-align:left;border:0;border-radius:26px;padding:22px;width:100%}
+.choice h2{font-size:26px;font-weight:800}
+.choice p{font-size:15px;line-height:1.45;opacity:.85}
+.choice .kicker{opacity:.9}
+.c1{background:var(--lavender);color:var(--black)}
+.c2{background:var(--black-2);color:var(--white);box-shadow:inset 0 0 0 1px var(--black-3)}
+.c3{background:var(--violet);color:#FFFFFF}
+.saved{font-size:14px;color:var(--grey-light)}
+
+/* setup screens (video, make your own) */
+.setup{min-height:100%;padding:calc(env(safe-area-inset-top,0px) + 20px) var(--gr) 40px var(--gl);max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.back{align-self:flex-start;background:none;border:0;color:var(--grey-light);font-weight:700;padding:6px 0}
+.setup h1{font-style:italic;font-weight:800;font-size:38px}
+.setup p{color:#C9C5D2}
+.field{display:grid;gap:6px}
+.field label{font-size:14px;font-weight:700}
+input[type=text],input[type=url],select,textarea{width:100%;font:16px var(--font);color:var(--black);background:var(--white);border:2px solid transparent;border-radius:14px;padding:12px 14px}
+textarea{min-height:120px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
+.msg{font-size:14px;min-height:1.2em;color:#FFB4AB}
+.steps{display:grid;gap:12px;counter-reset:s}
+.steps li{list-style:none;background:var(--black-2);border-radius:18px;padding:16px;display:grid;gap:10px}
+.steps{padding:0;margin:0}
+.prompt{background:var(--black);border:1px solid var(--black-3);border-radius:12px;padding:12px;font-size:13px;line-height:1.5;color:#C9C5D2;max-height:140px;overflow:auto;white-space:pre-wrap}
+
+/* feed */
+.feed-wrap{position:fixed;inset:0;background:var(--black)}
+.feed-top{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 12px) var(--gr) 10px var(--gl);background:linear-gradient(180deg,rgba(13,13,15,.85),rgba(13,13,15,0))}
+.feed-top .x{background:rgba(255,255,255,.12);border:0;border-radius:999px;width:38px;height:38px;font-size:18px;font-weight:800;flex:none}
+.feed-top .t{flex:1;min-width:0;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-top .n{font-size:13px;font-weight:700;color:var(--grey-light);font-variant-numeric:tabular-nums}
+.bar{position:absolute;left:0;right:0;top:0;height:3px;background:rgba(255,255,255,.08);z-index:6}
+.bar i{display:block;height:100%;width:0;background:var(--violet);transition:width .3s ease}
+.feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.card{height:100%;min-height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 64px) var(--gr) calc(env(safe-area-inset-bottom,0px) + 44px) var(--gl)}
+.panel{width:100%;max-width:480px;border-radius:30px;padding:28px 24px;display:flex;flex-direction:column;gap:16px;max-height:100%;overflow:auto}
+.p-concept{background:var(--lavender);color:var(--black)}
+.p-concept.again{background:var(--violet);color:#FFFFFF}
+.p-quiz{background:var(--black-2);color:var(--white);box-shadow:inset 0 0 0 1px var(--black-3)}
+.p-end{background:var(--paper);color:var(--black)}
+.panel h2{font-size:34px;font-weight:800}
+.panel .body{font-size:18px;line-height:1.5}
+.panel .ex{font-size:15px;line-height:1.5;background:rgba(255,255,255,.55);border-radius:16px;padding:12px 14px}
+.p-concept.again .ex{background:rgba(13,13,15,.18)}
+.src{font-size:12px;font-weight:700;opacity:.7}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;border:0;border-radius:16px;padding:14px 16px;background:var(--black-3);color:var(--white);font-weight:700;font-size:16px;line-height:1.35}
+.opt.right{background:var(--ok);color:#FFFFFF}
+.opt.wrong{background:var(--bad);color:#FFFFFF}
+.opt[disabled]{cursor:default}
+.explain{font-size:15px;line-height:1.5;color:#C9C5D2;border-left:3px solid var(--violet);padding-left:12px}
+.hint{font-size:13px;font-weight:700;color:var(--grey-light);text-align:center}
+.p-concept .hint{color:rgba(13,13,15,.55)}
+.p-concept.again .hint{color:rgba(255,255,255,.7)}
+.clip{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000;max-width:100%}
+.clip iframe{width:100%;height:100%;border:0;display:block}
+.score{font-size:64px;font-weight:800;font-style:italic;letter-spacing:-.05em;line-height:1}
+.rate{display:flex;gap:8px;flex-wrap:wrap}
+.rate button{flex:1;min-width:44px;border:2px solid var(--line);background:var(--white);border-radius:14px;padding:10px 0;font-weight:800}
+.rate button[aria-pressed=true]{background:var(--violet);border-color:var(--violet);color:#FFFFFF}
+.p-end textarea,.p-end input{background:var(--white);border-color:var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--paper);color:var(--black);font-weight:700;font-size:14px;padding:10px 16px;border-radius:999px;z-index:20}
+@media (prefers-reduced-motion: reduce){.btn,.bar i{transition:none}}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<main id="home" class="home">
+  <header><a class="wm" href="../" style="font-size:34px">loop<i></i></a><a href="../">about loop.</a></header>
+  <div>
+    <p class="kicker" style="color:var(--lavender)">MVP · beta</p>
+    <h1>swipe to learn.<br>swipe to test.<br>swipe to reinforce<span class="dot">.</span></h1>
+  </div>
+  <p class="lede">5-minute revision from your actual IE courses. Pick one:</p>
+  <button class="choice c1" id="goDemo">
+    <span class="kicker">try it now · 4 min</span>
+    <h2>Edtech Challenge: business models</h2>
+    <p>Lean Canvas, AARRR, LTV vs CAC, pricing and runway. Today’s session as a feed, with a quick check every two cards.</p>
+  </button>
+  <button class="choice c2" id="goVideo">
+    <span class="kicker" style="color:var(--lavender)">for assigned videos</span>
+    <h2>Clip a class video</h2>
+    <p>Paste a YouTube link. loop. cuts it into short clips and stops every two clips to check you got the key idea.</p>
+  </button>
+  <button class="choice c3" id="goMake">
+    <span class="kicker">your own slides</span>
+    <h2>Make a feed from your material</h2>
+    <p>Turn a lecture deck or notes into your own feed in about 2 minutes.</p>
+  </button>
+  <p class="saved" id="savedInfo" hidden></p>
+</main>
+
+<!-- VIDEO SETUP -->
+<section id="videoSetup" class="setup" hidden>
+  <button class="back" data-home>← back</button>
+  <h1>clip a class video<span class="dot">.</span></h1>
+  <p>Paste the YouTube link your professor assigned. loop. splits it into short clips. Every two clips it pauses and asks what the key idea was, so you actively review instead of just watching.</p>
+  <div class="field"><label for="ytUrl">YouTube link</label><input id="ytUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off"></div>
+  <div class="field"><label for="clipLen">Clip length</label>
+    <select id="clipLen"><option value="60">60 seconds</option><option value="90" selected>90 seconds</option><option value="120">2 minutes</option></select>
+  </div>
+  <div class="field" id="durField" hidden><label for="durMin">Video length in minutes (we couldn’t read it automatically)</label><input id="durMin" type="text" inputmode="decimal" placeholder="e.g. 14"></div>
+  <button class="btn btn-violet" id="buildVideo">cut it into clips</button>
+  <p class="msg" id="videoMsg" role="status"></p>
+  <div id="ytProbe" style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none"></div>
+</section>
+
+<!-- MAKE YOUR OWN -->
+<section id="makeSetup" class="setup" hidden>
+  <button class="back" data-home>← back</button>
+  <h1>make your own feed<span class="dot">.</span></h1>
+  <p>Beta: for now loop. uses your own ChatGPT, Claude or Gemini to read your slides. Three steps:</p>
+  <ol class="steps">
+    <li><b>1. Copy the loop. prompt</b>
+      <div class="prompt" id="promptText"></div>
+      <button class="btn btn-white" id="copyPrompt" style="justify-self:start">copy prompt</button></li>
+    <li><b>2. Paste it into ChatGPT, Claude or Gemini and attach your lecture PDF or slides.</b></li>
+    <li><b>3. Paste the answer here</b>
+      <textarea id="feedJson" placeholder='{"title": "...", "cards": [ ... ]}'></textarea>
+      <button class="btn btn-violet" id="buildOwn" style="justify-self:start">build my feed</button>
+      <p class="msg" id="makeMsg" role="status"></p></li>
+  </ol>
+  <p style="font-size:14px">Prefer we do it for you? Email your slides to <b style="user-select:all">apploopstudy@gmail.com</b> and we’ll build your feed.</p>
+</section>
+
+<!-- FEED -->
+<div id="feedWrap" class="feed-wrap" hidden>
+  <div class="bar"><i id="barFill"></i></div>
+  <div class="feed-top"><button class="x" id="closeFeed" aria-label="Close feed">✕</button><span class="t" id="feedTitle"></span><span class="n" id="feedCount"></span></div>
+  <div class="feed" id="feed"></div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+// Feedback rows go into the loop. sign-ups Google Sheet (same form as the landing page).
+var GOOGLE_FORM = {
+  action: 'https://docs.google.com/forms/d/e/1FAIpQLSfVVpaw_qYGOwYuN5uXgntf53K91vngEfA0g8UMJGXb-MZZZA/formResponse',
+  contact: 'entry.1717750078',
+  source: 'entry.457579233'
+};
+
+// Demo feed: written by the loop. team from the topics of the Edtech Challenge business-model session.
+var DEMO = {
+  id: 'edtech-business-model',
+  title: 'Edtech Challenge · business models',
+  source: 'loop. demo · Edtech Challenge, business-model session',
+  cards: [
+    { type: 'concept', id: 'bm', title: 'What is a business model?', body: 'How your venture creates value for someone, delivers it, and captures part of that value back as money.', example: 'loop. creates value (5-min revision), delivers it (a swipeable feed on your phone) and could capture it with a student subscription or a university licence.' },
+    { type: 'concept', id: 'lean', title: 'The Lean Canvas', body: 'A one-page plan for early startups, adapted by Ash Maurya from the Business Model Canvas. Nine boxes: problem, customer segments, unique value proposition, solution, channels, revenue streams, cost structure, key metrics, unfair advantage.', example: 'It swaps four BMC boxes (key partners, key activities, key resources, customer relationships) for problem, solution, key metrics and unfair advantage.' },
+    { type: 'quiz', about: 'lean', question: 'Which box is in the Lean Canvas but NOT in the original Business Model Canvas?', options: ['Unfair advantage', 'Key partners', 'Customer relationships'], answer: 0, explain: 'Unfair advantage is something competitors can’t easily copy or buy. Key partners and customer relationships are classic BMC boxes the Lean Canvas replaced.' },
+    { type: 'concept', id: 'sbmc', title: 'Sustainable business model canvas', body: 'Extends the canvas beyond profit: next to the economic layer, you map your social and environmental costs and benefits.', example: 'For loop.: social benefit = fairer access to revision; environmental cost = servers and video streaming.' },
+    { type: 'concept', id: 'gtm', title: 'Go-to-market', body: 'Your plan to win your first customers: which narrow segment first (your beachhead), through which channel, with what message and price.', example: 'Beachhead: IE undergrads in quantitative courses. Channel: class WhatsApp groups and QR stickers. Message: “cool kids stay in the loop.”' },
+    { type: 'quiz', about: 'gtm', question: 'Why do startups pick a narrow beachhead market first?', options: ['To dominate one segment with focused resources before expanding', 'Because a big market is always too expensive to research', 'To avoid needing a value proposition'], answer: 0, explain: 'Winning one small, reachable segment gives you references, word of mouth and learning you can reuse in the next segment.' },
+    { type: 'concept', id: 'aarrr', title: 'Pirate metrics: AARRR', body: 'Dave McClure’s five stages of a user’s journey: Acquisition (they find you), Activation (first great experience), Retention (they come back), Referral (they bring others), Revenue (they pay).', example: 'loop.: QR scan → finishes a first feed → returns in week 2 → shares to the class group → pays before exams.' },
+    { type: 'quiz', about: 'aarrr', question: 'A student signs up and finishes their first 5-minute feed. Which AARRR stage is that?', options: ['Acquisition', 'Activation', 'Retention'], answer: 1, explain: 'Activation is the first moment of real value. Acquisition was the sign-up visit; retention is coming back later.' },
+    { type: 'concept', id: 'ltv', title: 'Unit economics: LTV vs CAC', body: 'LTV = what one customer is worth over their whole life (monthly revenue × gross margin × months they stay). CAC = what it costs to win one customer (sales and marketing spend ÷ new customers). Common rule of thumb: LTV at least 3× CAC.', example: 'If LTV is lower than CAC, every new customer loses you money: growing faster just loses money faster.' },
+    { type: 'quiz', about: 'ltv', question: 'A student pays €4/month, gross margin is 75%, they stay 10 months, and CAC is €12. What is LTV:CAC?', options: ['2.5 : 1, below the 3:1 rule of thumb', '3.3 : 1, healthy', '10 : 1, very healthy'], answer: 0, explain: 'LTV = €4 × 0.75 × 10 = €30. €30 ÷ €12 = 2.5. To improve it: raise retention or price, or lower CAC.' },
+    { type: 'concept', id: 'pricing', title: 'Pricing decisions', body: 'Three common approaches: cost-plus (cost + margin), competitor-based (price near alternatives) and value-based (price on the value the customer gets). Startups also choose a model: freemium, subscription, per-seat licence…', example: 'loop. could be free for students with a paid “exam mode”, or sold per seat to universities.' },
+    { type: 'quiz', about: 'pricing', question: 'Setting your price based on what the outcome is worth to the customer is called…', options: ['Cost-plus pricing', 'Value-based pricing', 'Competitor-based pricing'], answer: 1, explain: 'Value-based pricing starts from willingness to pay, not from your costs.' },
+    { type: 'concept', id: 'runway', title: 'How much money do you need?', body: 'Burn rate = cash you spend per month. Runway = cash ÷ burn rate. Raise enough to reach your next milestone with a buffer, often 12 to 18 months of runway.', example: '€60,000 in the bank and €5,000 burn per month = 12 months of runway.' },
+    { type: 'quiz', about: 'runway', question: 'You have €45,000 and spend €3,000 a month. What is your runway?', options: ['9 months', '15 months', '30 months'], answer: 1, explain: '€45,000 ÷ €3,000 = 15 months.' },
+    { type: 'concept', id: 'scale', title: 'Growth and scaling', body: 'Scaling means growing users faster than costs. Common levers: referral loops (users invite users), product-led growth (the product sells itself), partnerships, and automating what you did by hand.', example: 'loop.’s growth loop: every feed ends with “send to my class”, so each user can bring in a whole class.' }
+  ]
+};
+
+var PROMPT = 'You are loop., a microlearning app for university students. Read the lecture material I attached and turn it into a swipeable revision feed.\n\nRules:\n- Use ONLY the attached material. Do not invent facts.\n- 6 to 10 concept cards. Each body: max 45 words, plain language.\n- Each concept card may have a short real example from the material.\n- After every 2 concept cards, add 1 multiple-choice quiz card with 3 options about those concepts.\n- Add a "source" to every concept card, like "slide 4" or "page 2".\n\nReply with ONLY this JSON, nothing else:\n{\n  "title": "Course · topic",\n  "cards": [\n    {"type": "concept", "id": "c1", "title": "...", "body": "...", "example": "...", "source": "slide 3"},\n    {"type": "quiz", "about": "c1", "question": "...", "options": ["...", "...", "..."], "answer": 0, "explain": "..."}\n  ]\n}\n"answer" is the index (0, 1 or 2) of the correct option.';
+
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var screens = ['home', 'videoSetup', 'makeSetup', 'feedWrap'];
+  function show(id){ screens.forEach(function(s){ $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+  function store(k, v){ try { if (v === undefined) return JSON.parse(localStorage.getItem('loop.' + k) || 'null'); localStorage.setItem('loop.' + k, JSON.stringify(v)); } catch (e) { return null; } }
+  function toast(t){ var el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function(){ el.hidden = true; }, 2200); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function mmss(s){ s = Math.round(s); return Math.floor(s/60) + ':' + ('0' + (s % 60)).slice(-2); }
+
+  document.querySelectorAll('[data-home]').forEach(function(b){ b.addEventListener('click', function(){ show('home'); }); });
+  $('goDemo').addEventListener('click', function(){ openFeed(DEMO); });
+  $('goVideo').addEventListener('click', function(){ show('videoSetup'); });
+  $('goMake').addEventListener('click', function(){ show('makeSetup'); });
+  $('promptText').textContent = PROMPT;
+  $('copyPrompt').addEventListener('click', function(){
+    var b = this;
+    function sel(){ var r = document.createRange(); r.selectNodeContents($('promptText')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'selected, press copy'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(PROMPT).then(function(){ b.textContent = 'copied'; }, sel); else sel();
+  });
+
+  var mine = store('ownFeed');
+  if (mine && mine.cards) { var info = $('savedInfo'); info.hidden = false; info.innerHTML = 'Your last feed: <a href="#" id="reopen">' + esc(mine.title) + '</a>'; $('reopen').addEventListener('click', function(e){ e.preventDefault(); openFeed(mine); }); }
+
+  /* ---------- feed engine ---------- */
+  var state = null;
+  function openFeed(feed, opts){
+    opts = opts || {};
+    state = { feed: feed, results: {}, missed: [], fuzzy: [], isReview: !!opts.review };
+    $('feedTitle').textContent = (opts.review ? 'review · ' : '') + feed.title;
+    var html = feed.cards.map(function(c, i){ return renderCard(c, i, opts.review); }).join('') + endCard();
+    var el = $('feed'); el.innerHTML = html; el.scrollTop = 0;
+    show('feedWrap');
+    wire(el);
+    progress();
+  }
+  function renderCard(c, i, again){
+    if (c.type === 'quiz') {
+      return '<section class="card" data-i="' + i + '"><div class="panel p-quiz">' +
+        '<span class="kicker" style="color:var(--lavender)">quick check</span>' +
+        '<h2 style="font-size:26px">' + esc(c.question) + '</h2>' +
+        '<div class="opts">' + c.options.map(function(o, k){ return '<button class="opt" data-q="' + i + '" data-k="' + k + '">' + esc(o) + '</button>'; }).join('') + '</div>' +
+        '<p class="explain" hidden>' + esc(c.explain || '') + '</p>' +
+        '<p class="hint">answer to keep going ↑</p></div></section>';
+    }
+    if (c.type === 'clip') {
+      return '<section class="card" data-i="' + i + '"><div class="panel p-quiz">' +
+        '<span class="kicker" style="color:var(--lavender)">clip ' + c.n + ' of ' + c.total + ' · ' + mmss(c.start) + '–' + mmss(c.end) + '</span>' +
+        '<div class="clip" data-yt="' + esc(c.vid) + '" data-start="' + c.start + '" data-end="' + c.end + '"></div>' +
+        '<p class="hint">watch, then swipe up ↑</p></div></section>';
+    }
+    if (c.type === 'recall') {
+      return '<section class="card" data-i="' + i + '"><div class="panel p-concept again">' +
+        '<span class="kicker">pause · active recall</span>' +
+        '<h2>what was the key idea of ' + mmss(c.start) + '–' + mmss(c.end) + '?</h2>' +
+        '<textarea data-note="' + i + '" placeholder="say it in one sentence, in your own words" style="min-height:90px"></textarea>' +
+        '<div class="row"><button class="btn btn-white" data-recall="' + i + '" data-v="got">I’ve got it</button><button class="btn btn-ghost" data-recall="' + i + '" data-v="fuzzy">still fuzzy</button></div>' +
+        '<p class="hint">writing it down beats re-watching</p></div></section>';
+    }
+    return '<section class="card" data-i="' + i + '"><div class="panel p-concept' + (again ? ' again' : '') + '">' +
+      '<span class="kicker">' + (again ? 'back for review' : 'swipe to learn') + '</span>' +
+      '<h2>' + esc(c.title) + '</h2><p class="body">' + esc(c.body) + '</p>' +
+      (c.example ? '<p class="ex"><b>Example:</b> ' + esc(c.example) + '</p>' : '') +
+      '<p class="src">Source: ' + esc(c.source || state.feed.source || state.feed.title) + '</p>' +
+      '<p class="hint">swipe up ↑</p></div></section>';
+  }
+  function endCard(){
+    return '<section class="card" data-end="1"><div class="panel p-end" id="endPanel"></div></section>';
+  }
+  function wire(el){
+    el.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click', answer); });
+    el.querySelectorAll('[data-recall]').forEach(function(b){ b.addEventListener('click', recall); });
+    el.onscroll = function(){ clearTimeout(wire.t); wire.t = setTimeout(progress, 80); };
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          var box = en.target;
+          if (en.isIntersecting && !box.firstChild) {
+            box.innerHTML = '<iframe src="https://www.youtube.com/embed/' + encodeURIComponent(box.dataset.yt) + '?start=' + box.dataset.start + '&end=' + box.dataset.end + '&rel=0&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin) + '" title="Video clip" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+          } else if (!en.isIntersecting && box.firstChild) { box.innerHTML = ''; }
+        });
+      }, { root: el, rootMargin: '100% 0px' });
+      el.querySelectorAll('.clip').forEach(function(c){ io.observe(c); });
+    }
+  }
+  function progress(){
+    var el = $('feed'), cards = el.querySelectorAll('.card'), i = Math.round(el.scrollTop / el.clientHeight);
+    var total = cards.length - 1;
+    $('feedCount').textContent = Math.min(i + 1, total) + ' / ' + total;
+    $('barFill').style.width = Math.min(100, (i / Math.max(1, total)) * 100) + '%';
+    if (i >= total) renderEnd();
+  }
+  function answer(){
+    var q = +this.dataset.q, k = +this.dataset.k, card = state.feed.cards[q];
+    if (state.results[q] !== undefined) return;
+    var ok = k === card.answer; state.results[q] = ok;
+    var panel = this.closest('.panel');
+    panel.querySelectorAll('.opt').forEach(function(b){ b.disabled = true; var kk = +b.dataset.k; if (kk === card.answer) b.classList.add('right'); else if (kk === k) b.classList.add('wrong'); });
+    panel.querySelector('.explain').hidden = false;
+    panel.querySelector('.hint').textContent = ok ? 'nice. swipe up ↑' : 'saved for review. swipe up ↑';
+    if (!ok && card.about) state.missed.push(card.about);
+  }
+  function recall(){
+    var i = +this.dataset.recall, c = state.feed.cards[i], v = this.dataset.v;
+    state.results[i] = v === 'got';
+    if (v === 'fuzzy') state.fuzzy.push(c);
+    var note = document.querySelector('[data-note="' + i + '"]').value.trim();
+    if (note) { var notes = store('notes') || {}; notes[state.feed.id + ':' + c.start] = note; store('notes', notes); }
+    this.parentNode.querySelectorAll('button').forEach(function(b){ b.disabled = true; b.style.opacity = b === this ? 1 : .4; }, this);
+    this.closest('.panel').querySelector('.hint').textContent = v === 'got' ? 'locked in. swipe up ↑' : 'we’ll replay that part at the end ↑';
+  }
+  function renderEnd(){
+    var p = $('endPanel'); if (!p || p.dataset.done) return; p.dataset.done = 1;
+    var keys = Object.keys(state.results), right = keys.filter(function(k){ return state.results[k]; }).length;
+    var isVideo = state.feed.cards.some(function(c){ return c.type === 'clip'; });
+    var missedConcepts = state.feed.cards.filter(function(c){ return c.type === 'concept' && state.missed.indexOf(c.id) > -1; });
+    var reviewBtn = '';
+    if (!state.isReview && missedConcepts.length) reviewBtn = '<button class="btn btn-violet" id="doReview">swipe to reinforce (' + missedConcepts.length + ')</button>';
+    if (!state.isReview && isVideo && state.fuzzy.length) reviewBtn = '<button class="btn btn-violet" id="doReview">replay the fuzzy parts (' + state.fuzzy.length + ')</button>';
+    p.innerHTML =
+      '<span class="kicker" style="color:var(--violet)">feed done</span>' +
+      (keys.length ? '<p class="score">' + right + '/' + keys.length + '</p><p>' + (isVideo ? 'parts you’re confident about' : 'quick checks right') + '</p>' : '<h2>nice<span class="dot">.</span></h2>') +
+      (reviewBtn ? '<div>' + reviewBtn + '</div>' : '<p>Nothing to reinforce. You’re in the loop.</p>') +
+      '<hr style="border:0;border-top:1px solid var(--line);width:100%">' +
+      '<b>help us build loop. (10 sec)</b>' +
+      '<label class="field"><span style="font-size:14px">How useful was this? (1 = not at all, 5 = very)</span><div class="rate" id="rateUse">' + [1,2,3,4,5].map(function(n){ return '<button type="button" data-v="' + n + '" aria-pressed="false">' + n + '</button>'; }).join('') + '</div></label>' +
+      '<label class="field"><span style="font-size:14px">Would you use loop. to revise before an exam?</span><div class="rate" id="rateAgain">' + ['yes','maybe','no'].map(function(n){ return '<button type="button" data-v="' + n + '" aria-pressed="false">' + n + '</button>'; }).join('') + '</div></label>' +
+      '<div class="field"><label for="fbText" style="font-size:14px">What would make it better? (optional)</label><textarea id="fbText" maxlength="300" style="min-height:70px"></textarea></div>' +
+      '<div class="row"><button class="btn btn-violet" id="sendFb">send feedback</button><button class="btn btn-ghost" id="toHome">back to start</button></div>' +
+      '<p style="font-size:12px;color:var(--grey)">Feedback is anonymous: we don’t store your name or email with it.</p>';
+    ['rateUse', 'rateAgain'].forEach(function(id){
+      $(id).addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; this.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', x === b); }); });
+    });
+    $('toHome').addEventListener('click', function(){ show('home'); });
+    $('sendFb').addEventListener('click', function(){ sendFeedback(right, keys.length, this); });
+    var rv = $('doReview');
+    if (rv) rv.addEventListener('click', function(){
+      if (isVideo) openFeed({ id: state.feed.id, title: state.feed.title, source: state.feed.source, cards: state.fuzzy.map(function(r, n, all){ return { type: 'clip', vid: r.vid, start: r.start, end: r.end, n: n + 1, total: all.length }; }) }, { review: true });
+      else {
+        var ids = state.missed, cards = [];
+        state.feed.cards.forEach(function(c){ if (c.type === 'concept' && ids.indexOf(c.id) > -1) { cards.push(c); state.feed.cards.forEach(function(q){ if (q.type === 'quiz' && q.about === c.id) cards.push(q); }); } });
+        openFeed({ id: state.feed.id, title: state.feed.title, source: state.feed.source, cards: cards }, { review: true });
+      }
+    });
+  }
+  function sendFeedback(right, total, btn){
+    var use = document.querySelector('#rateUse [aria-pressed=true]'), again = document.querySelector('#rateAgain [aria-pressed=true]');
+    if (!use || !again) { toast('Pick a number and yes / maybe / no first'); return; }
+    var text = $('fbText').value.trim().replace(/\s+/g, ' ').slice(0, 300);
+    var summary = ['feedback', 'feed: ' + state.feed.title, 'score ' + right + '/' + total, 'useful ' + use.dataset.v + '/5', 'exam use: ' + again.dataset.v, text ? 'said: ' + text : ''].filter(Boolean).join(' | ');
+    var row = new URLSearchParams(); row.append(GOOGLE_FORM.contact, 'app feedback'); row.append(GOOGLE_FORM.source, summary.slice(0, 480));
+    btn.disabled = true; btn.textContent = 'sending…';
+    fetch(GOOGLE_FORM.action, { method: 'POST', mode: 'no-cors', body: row })
+      .then(function(){ btn.textContent = 'thank you 💜'; toast('Feedback sent. Thank you!'); })
+      .catch(function(){ btn.disabled = false; btn.textContent = 'send feedback'; toast('Couldn’t send. Check your connection.'); });
+  }
+  $('closeFeed').addEventListener('click', function(){ show('home'); });
+
+  /* ---------- video clipping ---------- */
+  function ytId(u){
+    var m = String(u).match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/);
+    return m ? m[1] : null;
+  }
+  var ytReady = null;
+  function loadYT(){
+    if (ytReady) return ytReady;
+    ytReady = new Promise(function(res, rej){
+      if (window.YT && window.YT.Player) return res();
+      window.onYouTubeIframeAPIReady = res;
+      var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.onerror = rej; document.head.appendChild(s);
+      setTimeout(rej, 8000);
+    });
+    return ytReady;
+  }
+  function getDuration(id){
+    return loadYT().then(function(){
+      return new Promise(function(res, rej){
+        var host = document.createElement('div'); $('ytProbe').innerHTML = ''; $('ytProbe').appendChild(host);
+        var done = false;
+        var p = new YT.Player(host, { videoId: id, width: 200, height: 120, playerVars: { playsinline: 1 },
+          events: { onReady: function(){ var d = p.getDuration(); done = true; d > 0 ? res(d) : rej(); }, onError: function(){ done = true; rej(); } } });
+        setTimeout(function(){ if (!done) rej(); }, 8000);
+      });
+    });
+  }
+  function buildClips(id, dur, len){
+    var cards = [], n = Math.ceil(dur / len), made = 0;
+    for (var s = 0; s < dur; s += len) {
+      made++;
+      var e = Math.min(dur, s + len);
+      cards.push({ type: 'clip', vid: id, start: s, end: Math.ceil(e), n: made, total: n });
+      if (made % 2 === 0 || e >= dur) cards.push({ type: 'recall', vid: id, start: Math.max(0, s - (made % 2 === 0 ? len : 0)), end: Math.ceil(e) });
+    }
+    return cards;
+  }
+  $('buildVideo').addEventListener('click', function(){
+    var id = ytId($('ytUrl').value), len = +$('clipLen').value, msg = $('videoMsg'), btn = this;
+    msg.textContent = '';
+    if (!id) { msg.textContent = 'That doesn’t look like a YouTube link. Copy it from the browser bar or the Share button.'; return; }
+    var manual = parseFloat(String($('durMin').value).replace(',', '.'));
+    var go = function(dur){ openFeed({ id: 'video-' + id, title: 'Class video · ' + Math.round(dur / 60) + ' min in ' + Math.ceil(dur / len) + ' clips', source: 'YouTube', cards: buildClips(id, dur, len) }); };
+    if (!$('durField').hidden && manual > 0) { go(manual * 60); return; }
+    btn.disabled = true; btn.textContent = 'reading the video…';
+    getDuration(id).then(go).catch(function(){
+      $('durField').hidden = false; msg.textContent = 'We couldn’t read the video length. Type it in minutes and press the button again.';
+    }).then(function(){ btn.disabled = false; btn.textContent = 'cut it into clips'; });
+  });
+
+  /* ---------- make your own ---------- */
+  $('buildOwn').addEventListener('click', function(){
+    var raw = $('feedJson').value, msg = $('makeMsg'); msg.textContent = '';
+    var start = raw.indexOf('{'), end = raw.lastIndexOf('}');
+    try {
+      var f = JSON.parse(raw.slice(start, end + 1));
+      if (!f || !Array.isArray(f.cards) || !f.cards.length) throw new Error('no cards');
+      f.cards = f.cards.filter(function(c){
+        if (c.type === 'quiz') return c.question && Array.isArray(c.options) && c.options.length > 1 && c.answer >= 0 && c.answer < c.options.length;
+        c.type = 'concept'; return c.title && c.body;
+      });
+      if (!f.cards.length) throw new Error('no valid cards');
+      f.cards.forEach(function(c, i){ if (c.type === 'concept' && !c.id) c.id = 'c' + i; });
+      f.id = 'own'; f.title = f.title || 'My feed'; f.source = f.title;
+      store('ownFeed', f);
+      openFeed(f);
+    } catch (e) {
+      msg.textContent = 'We couldn’t read that. Paste the whole answer from the AI, starting with { and ending with }.';
+    }
+  });
+})();
+</script>
+</body>
+</html>
