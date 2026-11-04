@@ -324,6 +324,12 @@ var GOOGLE_FORM = {
   var siteUrl = isLocal ? 'https://studywithloop.github.io/' : location.origin + location.pathname;
   var source = (location.search.match(/[?&]src=([\w-]{1,30})/) || [])[1] || 'direct';
 
+  // links ending in #join (e.g. the Instagram QR) land on the sign-up form once fonts have settled the layout
+  if (location.hash === '#join') {
+    var toJoin = function(){ var el = document.getElementById('join'); if (el) el.scrollIntoView({ block: 'start' }); };
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function(){ setTimeout(toJoin, 50); });
+  }
+
   // feed mockup: learn -> test -> reinforce
   var slides = [].slice.call(document.querySelectorAll('.slide')), i = 0;
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
