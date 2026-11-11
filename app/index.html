@@ -221,6 +221,64 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
   .reel .ani,.reel .emo,.reel.on .ani,.reel.on .emo,.reel.on .vz li,.reel.on .vz.cmp>div,.reel.on .vz.stat b{opacity:1;animation:none;transform:none}
   .burst{animation:none;opacity:0}
 }
+
+/* ---------- animated explainers ---------- */
+.k-anim{background:var(--lavender);color:var(--black)}
+.k-anim.again{background:var(--violet);color:#FFFFFF}
+.k-anim.k-video{background:var(--black);color:#FFFFFF}
+.segs{position:absolute;top:calc(env(safe-area-inset-top,0px) + 62px);left:var(--gl);right:var(--gr);display:flex;gap:4px;z-index:2}
+.segs i{flex:1;height:4px;border-radius:9px;background:rgba(13,13,15,.15);overflow:hidden}
+.k-video .segs i,.again .segs i{background:rgba(255,255,255,.3)}
+.segs b{display:block;height:100%;width:0;background:currentColor}
+.segs i.full b{width:100%}
+.segs i.now b{animation:segfill linear forwards}
+.paused .segs i.now b{animation-play-state:paused}
+@keyframes segfill{from{width:0}to{width:100%}}
+.stage{position:absolute;left:0;right:70px;top:calc(env(safe-area-inset-top,0px) + 82px);bottom:150px;display:flex;align-items:center;padding:0 0 0 var(--gl);z-index:1;cursor:pointer}
+.sc{width:100%;display:grid;gap:14px}
+.sc h2{font-size:40px;font-weight:800;letter-spacing:-.045em;line-height:.98}
+.sc h3{font-size:24px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.cap{position:absolute;left:0;right:70px;bottom:0;padding:0 0 calc(env(safe-area-inset-bottom,0px) + 22px) var(--gl);z-index:1;display:grid;gap:8px}
+.capt{font-size:17px;font-weight:700;line-height:1.35;background:rgba(255,255,255,.75);color:var(--black);border-radius:14px;padding:10px 12px;min-height:3.2em}
+.k-video .capt,.again .capt{background:rgba(13,13,15,.6);color:#FFFFFF}
+.big-emo{font-size:84px;line-height:1;display:inline-block}
+.sc .a{opacity:0;animation:rise .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * var(--step))}
+.sc .pop{display:inline-block;opacity:0;animation:pop .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * var(--step))}
+.sc-title .big-emo{animation:pop .7s cubic-bezier(.2,.7,.2,1) both}
+.bl{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.bl li{display:grid;gap:2px;padding-left:16px;border-left:4px solid var(--violet)}
+.bl b{font-size:19px}.bl span{font-size:15px;opacity:.8}
+.k-video .sc .vz.steps li,.again .sc .vz.steps li{background:rgba(255,255,255,.14)}
+.cmp2{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
+.cmp2>div{display:grid;gap:6px;background:rgba(255,255,255,.7);border-radius:18px;padding:14px;min-height:120px;align-content:start;opacity:0}
+.k-video .cmp2>div,.again .cmp2>div{background:rgba(255,255,255,.14)}
+.cmp2 b{font-size:18px}.cmp2 span{font-size:14px;line-height:1.4;opacity:.85}
+.cmp2 .from-l{animation:fromL .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--step)}
+.cmp2 .from-r{animation:fromR .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(2 * var(--step))}
+.vs2{font-style:italic;font-weight:800;font-size:18px;opacity:0;animation:pop .5s both;animation-delay:calc(1.5 * var(--step))}
+@keyframes fromL{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes fromR{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.count{font-size:88px;font-weight:800;font-style:italic;letter-spacing:-.05em;line-height:1;color:var(--violet);animation:pop .6s both;font-variant-numeric:tabular-nums}
+.k-video .count,.again .count{color:#FFFFFF}
+.eq{font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.25;display:flex;flex-wrap:wrap;gap:6px 10px}
+.eq span:nth-child(even){color:var(--violet)}
+.k-video .eq span:nth-child(even),.again .eq span:nth-child(even){color:var(--lavender)}
+.eq-res{font-size:52px;font-weight:800;font-style:italic;letter-spacing:-.04em;color:var(--violet)}
+.k-video .eq-res,.again .eq-res{color:#FFFFFF}
+.bars{display:grid;gap:10px}
+.brow{display:grid;grid-template-columns:minmax(70px,32%) 1fr auto;gap:10px;align-items:center;font-weight:700;font-size:14px}
+.brow i{display:block;height:20px;width:0;border-radius:6px;background:var(--violet);transition:width 1.1s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--d,0) * var(--step))}
+.k-video .brow i,.again .brow i{background:#FFFFFF}
+.ana{display:flex;align-items:center;gap:14px;font-size:76px;line-height:1}
+.ana i{font-style:normal;font-size:40px;font-weight:800;opacity:.6}
+.sc .sub{font-size:17px;line-height:1.4;opacity:.9}
+.quote{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.25}
+.quote .w{opacity:0;animation:rise .35s both;animation-delay:calc(var(--w) * var(--wstep) + 200ms)}
+.paused .sc *{animation-play-state:paused!important}
+@media (prefers-reduced-motion: reduce){
+  .sc .a,.sc .pop,.cmp2>div,.vs2,.quote .w,.count,.big-emo{opacity:1!important;animation:none!important;transform:none!important}
+  .brow i{transition:none}
+}
 </style>
 <script src="/api/config"></script>
 </head>
@@ -243,7 +301,7 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
   <button class="choice c1" id="goDemo">
     <span class="kicker">try it now · 4 min</span>
     <h2>Edtech Challenge: business models</h2>
-    <p>Lean Canvas, AARRR, LTV vs CAC, pricing and runway. Today’s session as a feed, with a quick check every two cards.</p>
+    <p>Lean Canvas, AARRR, LTV vs CAC, pricing and runway, as animated explainers with a quick check every two.</p>
   </button>
   <button class="choice c2" id="goVideo">
     <span class="kicker" style="color:var(--violet)">for assigned videos</span>
@@ -328,21 +386,21 @@ var DEMO = {
   title: 'Edtech Challenge · business models',
   source: 'loop. demo · Edtech Challenge, business-model session',
   cards: [
-    { type: 'concept', id: 'bm', title: 'What is a business model?', body: 'How your venture creates value for someone, delivers it, and captures part of that value back as money.', example: 'loop. creates value (5-min revision), delivers it (a swipeable feed on your phone) and could capture it with a student subscription or a university licence.' },
-    { type: 'concept', id: 'lean', title: 'The Lean Canvas', body: 'A one-page plan for early startups, adapted by Ash Maurya from the Business Model Canvas. Nine boxes: problem, customer segments, unique value proposition, solution, channels, revenue streams, cost structure, key metrics, unfair advantage.', example: 'It swaps four BMC boxes (key partners, key activities, key resources, customer relationships) for problem, solution, key metrics and unfair advantage.' },
+    { type: 'concept', id: 'bm', title: 'What is a business model?', body: 'How your venture creates value for someone, delivers it, and captures part of that value back as money.', example: 'loop. creates value (5-min revision), delivers it (a swipeable feed on your phone) and could capture it with a student subscription or a university licence.', lang: 'en', emoji: "💡", scenes: [{"kind": "title", "narration": "Every startup needs an answer to one question: how does this thing actually make money?", "heading": "What is a business model?", "emoji": "💡", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "steps", "narration": "A business model explains how you create value for someone, deliver it to them, and capture part of it back as money.", "heading": "Three jobs", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Create value", "detail": "for a customer", "value": 0}, {"label": "Deliver it", "detail": "to that customer", "value": 0}, {"label": "Capture it", "detail": "as money back", "value": 0}]}, {"kind": "example", "narration": "Take loop: the value is quick revision, the delivery is this feed, and the capture could be a student subscription.", "heading": "Example", "emoji": "", "emoji2": "", "big": "Value: 5-minute revision. Delivery: a swipeable feed. Capture: a student subscription or university licence.", "count_to": 0, "items": []}] },
+    { type: 'concept', id: 'lean', title: 'The Lean Canvas', body: 'A one-page plan for early startups, adapted by Ash Maurya from the Business Model Canvas. Nine boxes: problem, customer segments, unique value proposition, solution, channels, revenue streams, cost structure, key metrics, unfair advantage.', example: 'It swaps four BMC boxes (key partners, key activities, key resources, customer relationships) for problem, solution, key metrics and unfair advantage.', lang: 'en', emoji: "🗺️", scenes: [{"kind": "title", "narration": "Startups move fast, so they plan on one single page. Meet the Lean Canvas.", "heading": "The Lean Canvas", "emoji": "🗺️", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "number", "narration": "Ash Maurya adapted the Business Model Canvas into nine boxes built for early-stage startups.", "heading": "boxes on a single page", "emoji": "", "emoji2": "", "big": "9", "count_to": 9, "items": []}, {"kind": "compare", "narration": "It swaps four classic boxes for the ones a startup worries about most: problem, solution, key metrics and unfair advantage.", "heading": "What changed", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Lean Canvas adds", "detail": "Problem, solution, key metrics, unfair advantage", "value": 0}, {"label": "BMC had", "detail": "Key partners, activities, resources, customer relationships", "value": 0}]}] },
     { type: 'quiz', about: 'lean', question: 'Which box is in the Lean Canvas but NOT in the original Business Model Canvas?', options: ['Unfair advantage', 'Key partners', 'Customer relationships'], answer: 0, explain: 'Unfair advantage is something competitors can’t easily copy or buy. Key partners and customer relationships are classic BMC boxes the Lean Canvas replaced.' },
-    { type: 'concept', id: 'sbmc', title: 'Sustainable business model canvas', body: 'Extends the canvas beyond profit: next to the economic layer, you map your social and environmental costs and benefits.', example: 'For loop.: social benefit = fairer access to revision; environmental cost = servers and video streaming.' },
-    { type: 'concept', id: 'gtm', title: 'Go-to-market', body: 'Your plan to win your first customers: which narrow segment first (your beachhead), through which channel, with what message and price.', example: 'Beachhead: IE undergrads in quantitative courses. Channel: class WhatsApp groups and QR stickers. Message: “cool kids stay in the loop.”' },
+    { type: 'concept', id: 'sbmc', title: 'Sustainable business model canvas', body: 'Extends the canvas beyond profit: next to the economic layer, you map your social and environmental costs and benefits.', example: 'For loop.: social benefit = fairer access to revision; environmental cost = servers and video streaming.', lang: 'en', emoji: "🌱", scenes: [{"kind": "title", "narration": "What if your business model counted its impact on people and the planet, not just profit?", "heading": "Beyond profit", "emoji": "🌱", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "bullets", "narration": "The sustainable business model canvas adds social and environmental costs and benefits next to the money.", "heading": "Three layers", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Economic", "detail": "money in and out", "value": 0}, {"label": "Social", "detail": "who benefits, who loses", "value": 0}, {"label": "Environmental", "detail": "costs to the planet", "value": 0}]}, {"kind": "compare", "narration": "For loop, that means fairer access to revision on one side, and the energy cost of servers and streaming on the other.", "heading": "loop. on the canvas", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Social benefit", "detail": "fairer access to revision for every student", "value": 0}, {"label": "Environmental cost", "detail": "servers and video streaming use energy", "value": 0}]}] },
+    { type: 'concept', id: 'gtm', title: 'Go-to-market', body: 'Your plan to win your first customers: which narrow segment first (your beachhead), through which channel, with what message and price.', example: 'Beachhead: IE undergrads in quantitative courses. Channel: class WhatsApp groups and QR stickers. Message: “cool kids stay in the loop.”', lang: 'en', emoji: "🚀", scenes: [{"kind": "title", "narration": "Having a product is not enough. How do you win your very first customers?", "heading": "Go-to-market", "emoji": "🚀", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "steps", "narration": "Pick one narrow beachhead segment, the channel to reach it, a message that lands, and a price.", "heading": "Your launch plan", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Beachhead", "detail": "one narrow segment first", "value": 0}, {"label": "Channel", "detail": "where you reach them", "value": 0}, {"label": "Message", "detail": "why they should care", "value": 0}, {"label": "Price", "detail": "what they will pay", "value": 0}]}, {"kind": "example", "narration": "For loop: IE students in quantitative courses, reached through class WhatsApp groups and QR stickers.", "heading": "Example", "emoji": "", "emoji2": "", "big": "IE undergrads in quant courses, reached through class WhatsApp groups: “cool kids stay in the loop.”", "count_to": 0, "items": []}] },
     { type: 'quiz', about: 'gtm', question: 'Why do startups pick a narrow beachhead market first?', options: ['To dominate one segment with focused resources before expanding', 'Because a big market is always too expensive to research', 'To avoid needing a value proposition'], answer: 0, explain: 'Winning one small, reachable segment gives you references, word of mouth and learning you can reuse in the next segment.' },
-    { type: 'concept', id: 'aarrr', title: 'Pirate metrics: AARRR', body: 'Dave McClure’s five stages of a user’s journey: Acquisition (they find you), Activation (first great experience), Retention (they come back), Referral (they bring others), Revenue (they pay).', example: 'loop.: QR scan → finishes a first feed → returns in week 2 → shares to the class group → pays before exams.' },
+    { type: 'concept', id: 'aarrr', title: 'Pirate metrics: AARRR', body: 'Dave McClure’s five stages of a user’s journey: Acquisition (they find you), Activation (first great experience), Retention (they come back), Referral (they bring others), Revenue (they pay).', example: 'loop.: QR scan → finishes a first feed → returns in week 2 → shares to the class group → pays before exams.', lang: 'en', emoji: "🏴‍☠️", scenes: [{"kind": "title", "narration": "Dave McClure’s pirate metrics track every step of a user’s journey. Say it like a pirate: AARRR!", "heading": "Pirate metrics: AARRR", "emoji": "🏴‍☠️", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "timeline", "narration": "Acquisition, activation, retention, referral and revenue: from first visit all the way to paying customer.", "heading": "The user journey", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Acquisition", "detail": "they find you", "value": 0}, {"label": "Activation", "detail": "first great experience", "value": 0}, {"label": "Retention", "detail": "they come back", "value": 0}, {"label": "Referral", "detail": "they bring friends", "value": 0}, {"label": "Revenue", "detail": "they pay", "value": 0}]}, {"kind": "example", "narration": "For loop: scan a QR code, finish a first feed, come back in week two, share it, and pay before exams.", "heading": "Example", "emoji": "", "emoji2": "", "big": "Scan a QR → finish a first feed → come back in week 2 → share to the class → pay before exams", "count_to": 0, "items": []}] },
     { type: 'quiz', about: 'aarrr', question: 'A student signs up and finishes their first 5-minute feed. Which AARRR stage is that?', options: ['Acquisition', 'Activation', 'Retention'], answer: 1, explain: 'Activation is the first moment of real value. Acquisition was the sign-up visit; retention is coming back later.' },
-    { type: 'concept', id: 'ltv', title: 'Unit economics: LTV vs CAC', body: 'LTV = what one customer is worth over their whole life (monthly revenue × gross margin × months they stay). CAC = what it costs to win one customer (sales and marketing spend ÷ new customers). Common rule of thumb: LTV at least 3× CAC.', example: 'If LTV is lower than CAC, every new customer loses you money: growing faster just loses money faster.' },
+    { type: 'concept', id: 'ltv', title: 'Unit economics: LTV vs CAC', body: 'LTV = what one customer is worth over their whole life (monthly revenue × gross margin × months they stay). CAC = what it costs to win one customer (sales and marketing spend ÷ new customers). Common rule of thumb: LTV at least 3× CAC.', example: 'If LTV is lower than CAC, every new customer loses you money: growing faster just loses money faster.', lang: 'en', emoji: "⚖️", scenes: [{"kind": "title", "narration": "Here is the number investors check first: is each customer worth more than they cost to win?", "heading": "LTV vs CAC", "emoji": "⚖️", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "equation", "narration": "Lifetime value is monthly revenue, times gross margin, times the number of months a customer stays.", "heading": "", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "LTV", "detail": "", "value": 0}, {"label": "=", "detail": "", "value": 0}, {"label": "revenue", "detail": "", "value": 0}, {"label": "×", "detail": "", "value": 0}, {"label": "margin", "detail": "", "value": 0}, {"label": "×", "detail": "", "value": 0}, {"label": "months", "detail": "", "value": 0}]}, {"kind": "compare", "narration": "Customer acquisition cost is your sales and marketing spend, divided by the new customers it brought in.", "heading": "The two sides", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "LTV", "detail": "what one customer is worth over their whole life", "value": 0}, {"label": "CAC", "detail": "what it costs you to win one customer", "value": 0}]}, {"kind": "number", "narration": "A common rule of thumb: lifetime value should be at least three times acquisition cost.", "heading": "LTV should be at least 3× CAC", "emoji": "", "emoji2": "", "big": "3×", "count_to": 3, "items": []}] },
     { type: 'quiz', about: 'ltv', question: 'A student pays €4/month, gross margin is 75%, they stay 10 months, and CAC is €12. What is LTV:CAC?', options: ['2.5 : 1, below the 3:1 rule of thumb', '3.3 : 1, healthy', '10 : 1, very healthy'], answer: 0, explain: 'LTV = €4 × 0.75 × 10 = €30. €30 ÷ €12 = 2.5. To improve it: raise retention or price, or lower CAC.' },
-    { type: 'concept', id: 'pricing', title: 'Pricing decisions', body: 'Three common approaches: cost-plus (cost + margin), competitor-based (price near alternatives) and value-based (price on the value the customer gets). Startups also choose a model: freemium, subscription, per-seat licence…', example: 'loop. could be free for students with a paid “exam mode”, or sold per seat to universities.' },
+    { type: 'concept', id: 'pricing', title: 'Pricing decisions', body: 'Three common approaches: cost-plus (cost + margin), competitor-based (price near alternatives) and value-based (price on the value the customer gets). Startups also choose a model: freemium, subscription, per-seat licence…', example: 'loop. could be free for students with a paid “exam mode”, or sold per seat to universities.', lang: 'en', emoji: "🏷️", scenes: [{"kind": "title", "narration": "How do you decide what to charge? There are three classic ways to set a price.", "heading": "Pricing decisions", "emoji": "🏷️", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "steps", "narration": "Cost-plus adds a margin to your cost. Competitor-based prices near the alternatives. Value-based prices on what the outcome is worth.", "heading": "Three ways to price", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Cost-plus", "detail": "your cost + a margin", "value": 0}, {"label": "Competitor-based", "detail": "close to the alternatives", "value": 0}, {"label": "Value-based", "detail": "what the outcome is worth to them", "value": 0}]}, {"kind": "example", "narration": "loop could be free for students with a paid exam mode, or sold per seat to universities.", "heading": "Example", "emoji": "", "emoji2": "", "big": "Free for students with a paid “exam mode”, or per-seat licences for universities.", "count_to": 0, "items": []}] },
     { type: 'quiz', about: 'pricing', question: 'Setting your price based on what the outcome is worth to the customer is called…', options: ['Cost-plus pricing', 'Value-based pricing', 'Competitor-based pricing'], answer: 1, explain: 'Value-based pricing starts from willingness to pay, not from your costs.' },
-    { type: 'concept', id: 'runway', title: 'How much money do you need?', body: 'Burn rate = cash you spend per month. Runway = cash ÷ burn rate. Raise enough to reach your next milestone with a buffer, often 12 to 18 months of runway.', example: '€60,000 in the bank and €5,000 burn per month = 12 months of runway.' },
+    { type: 'concept', id: 'runway', title: 'How much money do you need?', body: 'Burn rate = cash you spend per month. Runway = cash ÷ burn rate. Raise enough to reach your next milestone with a buffer, often 12 to 18 months of runway.', example: '€60,000 in the bank and €5,000 burn per month = 12 months of runway.', lang: 'en', emoji: "⏳", scenes: [{"kind": "title", "narration": "Every startup has a clock ticking. It is called runway.", "heading": "How much money do you need?", "emoji": "⏳", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "equation", "narration": "Runway is the cash you have, divided by your burn rate: the money you spend each month.", "heading": "", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Runway", "detail": "", "value": 0}, {"label": "=", "detail": "", "value": 0}, {"label": "cash", "detail": "", "value": 0}, {"label": "÷", "detail": "", "value": 0}, {"label": "burn rate", "detail": "", "value": 0}]}, {"kind": "equation", "narration": "Sixty thousand euros in the bank, burning five thousand a month? That gives you twelve months.", "heading": "", "emoji": "", "emoji2": "", "big": "= 12 months", "count_to": 0, "items": [{"label": "€60,000", "detail": "", "value": 0}, {"label": "÷", "detail": "", "value": 0}, {"label": "€5,000/month", "detail": "", "value": 0}]}, {"kind": "number", "narration": "Raise enough to reach your next milestone with a buffer, often twelve to eighteen months of runway.", "heading": "months of runway to aim for", "emoji": "", "emoji2": "", "big": "18", "count_to": 18, "items": []}] },
     { type: 'quiz', about: 'runway', question: 'You have €45,000 and spend €3,000 a month. What is your runway?', options: ['9 months', '15 months', '30 months'], answer: 1, explain: '€45,000 ÷ €3,000 = 15 months.' },
-    { type: 'concept', id: 'scale', title: 'Growth and scaling', body: 'Scaling means growing users faster than costs. Common levers: referral loops (users invite users), product-led growth (the product sells itself), partnerships, and automating what you did by hand.', example: 'loop.’s growth loop: every feed ends with “send to my class”, so each user can bring in a whole class.' }
+    { type: 'concept', id: 'scale', title: 'Growth and scaling', body: 'Scaling means growing users faster than costs. Common levers: referral loops (users invite users), product-led growth (the product sells itself), partnerships, and automating what you did by hand.', example: 'loop.’s growth loop: every feed ends with “send to my class”, so each user can bring in a whole class.', lang: 'en', emoji: "📈", scenes: [{"kind": "title", "narration": "Scaling is not just growing. It is growing users faster than your costs.", "heading": "Growth and scaling", "emoji": "📈", "emoji2": "", "big": "", "count_to": 0, "items": []}, {"kind": "bullets", "narration": "Common levers are referral loops, product-led growth, partnerships, and automating what you used to do by hand.", "heading": "Growth levers", "emoji": "", "emoji2": "", "big": "", "count_to": 0, "items": [{"label": "Referral loops", "detail": "users invite users", "value": 0}, {"label": "Product-led growth", "detail": "the product sells itself", "value": 0}, {"label": "Partnerships", "detail": "borrow someone’s reach", "value": 0}, {"label": "Automation", "detail": "stop doing it by hand", "value": 0}]}, {"kind": "analogy", "narration": "loop’s growth loop: every feed ends with send to my class, so one student can bring in a whole class.", "heading": "One student brings a whole class", "emoji": "👤", "emoji2": "👥", "big": "", "count_to": 0, "items": [{"label": "Every feed ends with “send to my class”", "detail": "", "value": 0}]}] }
   ]
 };
 
@@ -429,8 +487,8 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
     start(feed.cards.map(function(c){ return { c: c, f: feed, again: !!opts.review }; }), { feed: feed, title: (opts.review ? 'review · ' : '') + feed.title, review: !!opts.review });
   }
   function start(items, o){
-    stopBg();
-    state = { feed: o.feed, items: items, results: {}, missed: [], fuzzy: [], isReview: !!o.review, forYou: !!o.forYou, active: -1, player: null, playerIdx: -1 };
+    stopBg(); stopAnim(); unlockSpeech();
+    state = { feed: o.feed, items: items, results: {}, missed: [], fuzzy: [], isReview: !!o.review, forYou: !!o.forYou, active: -1, player: null, playerIdx: -1, anim: null };
     $('feedTitle').textContent = o.title;
     $('feedWrap').classList.toggle('fy', state.forYou);
     var el = $('feed');
@@ -482,6 +540,14 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
     }
     // concept
     var st = cardState[cardKey(it.f, c)] || {};
+    if (c.scenes && c.scenes.length) {
+      return '<section class="card reel k-anim' + (c.vid ? ' k-video' : '') + (it.again ? ' again' : '') + '" data-i="' + i + '">' + (c.vid ? bgVideo(c) : '') +
+        '<div class="segs" aria-hidden="true">' + c.scenes.map(function(){ return '<i><b></b></i>'; }).join('') + '</div>' +
+        '<div class="stage" role="img" aria-label="' + esc(c.title + ': ' + c.body) + '"></div>' +
+        '<div class="cap">' + (it.again ? '<span class="kicker">' + (st.saved ? '❤️ saved · back for review' : 'back for review') + '</span>' : '') + '<p class="capt" aria-live="polite">' + esc(c.title) + '</p>' + byline(it) + '</div>' +
+        rail([railBtn('save', i, st.saved ? '❤️' : '♡', 'save', st.saved), railBtn('explain', i, '🔁', 'simpler'), canSpeak ? railBtn('voice', i, voiceOn() ? '🗣️' : '🔇', 'voice') : '', c.vid ? railBtn('sound', i, '🔊', mmss(c.start || 0)) : '', railBtn('share', i, '↗', 'share')]) +
+        '<div class="sheet" hidden></div></section>';
+    }
     return '<section class="card reel k-concept' + (c.vid ? ' k-video' : '') + (it.again ? ' again' : '') + '" data-i="' + i + '">' + (c.vid ? bgVideo(c) : '') + '<div class="body">' +
       '<span class="kicker ani" style="--d:0">' + (it.again ? (st.saved ? '❤️ saved · back for review' : 'back for review') : 'swipe to learn') + '</span>' +
       (c.emoji ? '<span class="emo" aria-hidden="true">' + esc(c.emoji) + '</span>' : '') +
@@ -515,6 +581,7 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
     if (b.dataset.act === 'explain') explain(i);
     if (b.dataset.act === 'sound') sound(i, b);
     if (b.dataset.act === 'share') share(it);
+    if (b.dataset.act === 'voice') toggleVoice();
     if (b.dataset.close !== undefined) b.closest('.sheet').hidden = true;
   });
   // double-tap a concept card to save it, like a TikTok like (dblclick on computers, two quick taps on phones)
@@ -551,7 +618,9 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
       state.active = i;
       cards.forEach(function(c, k){ c.classList.toggle('on', k === i); });
       el.querySelectorAll('.sheet').forEach(function(s){ s.hidden = true; });
+      stopAnim();
       playBg(i);
+      if (state.items[i] && state.items[i].c.scenes) playAnim(i, 0);
     }
     lazyClips(cards, i);
   }
@@ -596,7 +665,10 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
   function sound(i, b){
     var it = state.items[i], r = clipRange(it.c), p = state.player;
     if (p && state.playerIdx === i && p.isMuted) {
-      if (p.isMuted()) { p.unMute(); p.setVolume(100); p.seekTo(r.s, true); p.playVideo(); b.querySelector('.ic').textContent = '🔇'; }
+      if (p.isMuted()) {
+        if (state.anim && state.anim.i === i) { var card = state.anim.card, k = state.anim.k; stopAnim(); card.classList.add('paused'); card.dataset.k = k; card.querySelector('.capt').textContent = '🎬 original video · tap to resume the explainer'; }
+        p.unMute(); p.setVolume(100); p.seekTo(r.s, true); p.playVideo(); b.querySelector('.ic').textContent = '🔇';
+      }
       else { p.mute(); b.querySelector('.ic').textContent = '🔊'; }
       return;
     }
@@ -637,6 +709,126 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
     var text = c.type === 'quiz' ? 'Quick check: ' + c.question + ' 🤔 Revise with me on loop.' : (c.type === 'intro' ? (c.hook || it.f.title) : c.title + ': ' + c.body) + ' (via loop.)';
     if (navigator.share) { navigator.share({ title: 'loop.', text: text, url: url }).catch(function(){}); return; }
     window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank', 'noopener');
+  }
+
+  /* ---------- animated explainers: play a concept's storyboard scene by scene ---------- */
+  var VOICE_KEY = 'loop.voice';
+  function voiceOn(){ try { return localStorage.getItem(VOICE_KEY) !== 'off'; } catch (e) { return true; } }
+  function setVoice(on){ try { localStorage.setItem(VOICE_KEY, on ? 'on' : 'off'); } catch (e) {} }
+  var canSpeak = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  function pickVoice(lang){
+    var vs = canSpeak ? speechSynthesis.getVoices() : [], base = String(lang || 'en').toLowerCase().split('-')[0];
+    var mine = vs.filter(function(v){ return v.lang && v.lang.toLowerCase().split(/[-_]/)[0] === base; });
+    var good = /premium|enhanced|natural|neural|google|samantha|daniel|karen|moira|serena|monica|paulina/i;
+    return mine.filter(function(v){ return good.test(v.name); })[0] || mine.filter(function(v){ return v.localService; })[0] || mine[0] || null;
+  }
+  if (canSpeak) speechSynthesis.onvoiceschanged = function(){};
+  // iPhones only allow speech that starts from a tap, so "unlock" it when a feed is opened.
+  function unlockSpeech(){ if (!canSpeak || !voiceOn()) return; try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {} }
+
+  function estMs(text){ return Math.max(2600, Math.round(String(text).split(/\s+/).length / 2.6 * 1000) + 900); }
+
+  function sceneHtml(s, dur){
+    var items = s.items || [], n = Math.max(1, items.length + (s.big ? 1 : 0));
+    var step = Math.max(160, Math.min(900, Math.round(dur * 0.55 / n)));
+    var head = s.heading ? '<h3 class="a" style="--d:0">' + esc(s.heading) + '</h3>' : '';
+    var inner = '';
+    switch (s.kind) {
+      case 'title':
+        inner = '<span class="big-emo">' + esc(s.emoji || '💡') + '</span><h2 class="a" style="--d:1">' + esc(s.heading) + '</h2>'; break;
+      case 'steps':
+        inner = head + '<ol class="vz steps">' + items.map(function(it, k){ return '<li class="a" style="--d:' + (k + 1) + '"><b>' + esc(it.label) + '</b><span>' + esc(it.detail) + '</span></li>'; }).join('') + '</ol>'; break;
+      case 'timeline':
+        inner = head + '<ol class="vz tl">' + items.map(function(it, k){ return '<li class="a" style="--d:' + (k + 1) + '"><b>' + esc(it.label) + '</b><span>' + esc(it.detail) + '</span></li>'; }).join('') + '</ol>'; break;
+      case 'bullets':
+        inner = head + '<ul class="bl">' + items.map(function(it, k){ return '<li class="a" style="--d:' + (k + 1) + '"><b>' + esc(it.label) + '</b>' + (it.detail ? '<span>' + esc(it.detail) + '</span>' : '') + '</li>'; }).join('') + '</ul>'; break;
+      case 'compare':
+        inner = head + '<div class="cmp2">' + items.slice(0, 2).map(function(it, k){ return '<div class="' + (k ? 'from-r' : 'from-l') + '" style="--d:' + (k + 1) + '"><b>' + esc(it.label) + '</b><span>' + esc(it.detail) + '</span></div>'; }).join('<i class="vs2" style="--d:2">vs</i>') + '</div>'; break;
+      case 'number':
+        inner = '<p class="count" data-to="' + (+s.count_to || 0) + '" data-big="' + esc(s.big) + '">' + esc(s.count_to ? s.big.replace(/[\d.,]+/, '0') : s.big) + '</p><h3 class="a" style="--d:2">' + esc(s.heading) + '</h3>'; break;
+      case 'equation':
+        inner = '<p class="eq">' + items.map(function(it, k){ return '<span class="a" style="--d:' + k + '">' + esc(it.label) + '</span>'; }).join(' ') + '</p>' + (s.big ? '<p class="eq-res pop" style="--d:' + items.length + '">' + esc(s.big) + '</p>' : ''); break;
+      case 'bars':
+        var max = Math.max.apply(null, items.map(function(it){ return Math.abs(it.value) || 0; }).concat([1]));
+        inner = head + '<div class="bars">' + items.map(function(it, k){ return '<div class="brow a" style="--d:' + (k + 1) + '"><span>' + esc(it.label) + '</span><i data-w="' + Math.round(Math.abs(it.value) / max * 100) + '"></i><b>' + esc(String(it.value)) + '</b></div>'; }).join('') + '</div>'; break;
+      case 'analogy':
+        inner = '<p class="ana"><span class="pop" style="--d:0">' + esc(s.emoji || '💡') + '</span><i class="a" style="--d:1">≈</i><span class="pop" style="--d:2">' + esc(s.emoji2 || '🔁') + '</span></p><h3 class="a" style="--d:3">' + esc(s.heading) + '</h3>' + (items[0] ? '<p class="a sub" style="--d:4">' + esc(items[0].label) + '</p>' : ''); break;
+      case 'example':
+        var words = String(s.big || '').split(/\s+/);
+        inner = '<p class="kicker a" style="--d:0">' + esc(s.heading || 'Example') + '</p><p class="quote">' + words.map(function(w, k){ return '<span class="w" style="--w:' + k + '">' + esc(w) + '</span>'; }).join(' ') + '</p>'; break;
+    }
+    return '<div class="sc sc-' + s.kind + '" style="--step:' + step + 'ms;--wstep:' + Math.max(40, Math.min(220, Math.round(dur * 0.6 / Math.max(1, words ? words.length : 1)))) + 'ms">' + inner + '</div>';
+  }
+  // count-up numbers and growing bars need a little JS after the scene is on screen
+  function afterMount(stage, dur){
+    stage.querySelectorAll('.bars i').forEach(function(i){ requestAnimationFrame(function(){ i.style.width = i.dataset.w + '%'; }); });
+    var c = stage.querySelector('.count'); if (!c) return;
+    var to = +c.dataset.to, big = c.dataset.big; if (!to) return;
+    var t0 = performance.now(), len = Math.min(1600, dur * 0.5), dec = (String(to).split('.')[1] || '').length;
+    (function tick(t){
+      var p = Math.min(1, (t - t0) / len), v = (to * (1 - Math.pow(1 - p, 3))).toFixed(dec);
+      c.textContent = p < 1 ? big.replace(/[\d.,]+/, Number(v).toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec })) : big;
+      if (p < 1 && c.isConnected) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  function stopAnim(){
+    var a = state && state.anim; if (!a) return;
+    clearTimeout(a.timer); a.stopped = true;
+    if (canSpeak) speechSynthesis.cancel();
+    state.anim = null;
+  }
+  function playAnim(i, from){
+    stopAnim();
+    var it = state.items[i], card = $('feed').querySelectorAll('.card')[i];
+    if (!it || !it.c.scenes || !card) return;
+    var a = state.anim = { i: i, k: from || 0, card: card, scenes: it.c.scenes, lang: it.c.lang || 'en', timer: null, stopped: false };
+    card.classList.remove('done', 'paused');
+    showScene(a);
+  }
+  function showScene(a){
+    if (a.stopped) return;
+    var s = a.scenes[a.k], stage = a.card.querySelector('.stage'), dur = estMs(s.narration);
+    stage.innerHTML = sceneHtml(s, dur);
+    a.card.querySelector('.capt').textContent = s.narration;
+    a.card.querySelectorAll('.segs i').forEach(function(seg, k){
+      seg.className = k < a.k ? 'full' : (k === a.k ? 'now' : '');
+      seg.firstChild.style.animationDuration = dur + 'ms';
+    });
+    afterMount(stage, dur);
+    var next = function(){ if (a.stopped || state.anim !== a) return; clearTimeout(a.timer); if (a.k < a.scenes.length - 1) { a.k++; showScene(a); } else finishAnim(a); };
+    if (canSpeak && voiceOn()) {
+      var u = new SpeechSynthesisUtterance(s.narration), v = pickVoice(a.lang);
+      if (v) u.voice = v; u.lang = (v && v.lang) || a.lang; u.rate = 1.05;
+      var spoke = false;
+      u.onstart = function(){ spoke = true; };
+      u.onend = function(){ a.timer = setTimeout(next, 450); };
+      u.onerror = function(){ if (!a.stopped) a.timer = setTimeout(next, spoke ? 300 : dur); };
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+      a.timer = setTimeout(next, dur * 2 + 3000); // safety net if the browser never reports the end
+    } else {
+      a.timer = setTimeout(next, dur);
+    }
+  }
+  function finishAnim(a){
+    a.card.classList.add('done');
+    a.card.querySelectorAll('.segs i').forEach(function(seg){ seg.className = 'full'; });
+    a.card.querySelector('.capt').textContent = 'tap to replay · swipe up ↑';
+    state.anim = null;
+  }
+  // tap the animation: pause / resume, or replay once it has finished
+  $('feed').addEventListener('click', function(e){
+    var stage = e.target.closest('.stage'); if (!stage || e.target.closest('button')) return;
+    var card = stage.closest('.card'), i = +card.dataset.i, a = state.anim;
+    if (card.classList.contains('done')) return playAnim(i, 0);
+    if (a && a.i === i) { var k = a.k; stopAnim(); card.classList.add('paused'); card.dataset.k = k; card.querySelector('.capt').textContent = '⏸ paused · tap to keep watching'; return; }
+    if (card.classList.contains('paused')) playAnim(i, +card.dataset.k || 0);
+  });
+  function toggleVoice(){
+    var on = !voiceOn(); setVoice(on);
+    document.querySelectorAll('[data-act=voice] .ic').forEach(function(ic){ ic.textContent = on ? '🗣️' : '🔇'; });
+    toast(on ? 'Voice on' : 'Voice off: subtitles only');
+    var a = state.anim; if (a) { if (on) unlockSpeech(); playAnim(a.i, a.k); }
   }
 
   /* ---------- For You: an endless mix of every feed, with missed and saved cards coming back ---------- */
@@ -757,7 +949,7 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
       .then(function(){ btn.textContent = 'thank you 💜'; toast('Feedback sent. Thank you!'); })
       .catch(function(){ btn.disabled = false; btn.textContent = 'send feedback'; toast('Couldn’t send. Check your connection.'); });
   }
-  function closeFeed(){ stopBg(); show('home'); renderMine(); }
+  function closeFeed(){ stopBg(); stopAnim(); show('home'); renderMine(); }
   $('closeFeed').addEventListener('click', closeFeed);
 
   /* ---------- video clipping ---------- */

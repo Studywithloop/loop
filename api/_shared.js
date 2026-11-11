@@ -101,3 +101,66 @@ export async function saveFeed(res, supabase, { title, source, cards }) {
   }
   return res.status(200).json({ feed });
 }
+
+/* ---------- animated explainers: the storyboard Claude writes for each concept ---------- */
+
+export const SCENE_KINDS = ['title', 'bullets', 'steps', 'timeline', 'compare', 'number', 'analogy', 'example', 'equation', 'bars'];
+
+export const SCENE_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['kind', 'narration', 'heading', 'emoji', 'emoji2', 'big', 'count_to', 'items'],
+  properties: {
+    kind: { type: 'string', enum: SCENE_KINDS },
+    narration: { type: 'string' },
+    heading: { type: 'string' },
+    emoji: { type: 'string' },
+    emoji2: { type: 'string' },
+    big: { type: 'string' },
+    count_to: { type: 'number' },
+    items: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['label', 'detail', 'value'],
+        properties: { label: { type: 'string' }, detail: { type: 'string' }, value: { type: 'number' } },
+      },
+    },
+  },
+};
+
+export const SCENE_RULES = `Every concept is a short animated explainer video, like an educational TikTok: "scenes" holds 3 to 6 scenes, about 20 to 40 seconds in total.
+Each scene has one spoken "narration" line (max 22 words, natural and energetic, like a creator talking to camera) and what appears on screen while it is said. The screen shows the key words and visuals; it must not just repeat the narration word for word.
+Scene kinds and the fields they use (set every unused field to "", 0 or []):
+- "title": always the first scene. emoji = one emoji for the idea; heading = a hook title, max 7 words.
+- "steps": a process. heading; items = 3 to 5 steps (label max 5 words, detail max 8 words).
+- "timeline": things in order over time. heading; items = 3 to 5 (label = when or phase, detail = what happens).
+- "compare": two things side by side. heading; items = exactly 2 (label = the thing, detail = how it differs, max 12 words).
+- "number": one striking number. big = how it is displayed (e.g. "€30", "15 months", "3×"); count_to = the number to count up to (0 if it can't be counted); heading = what it means (max 10 words).
+- "equation": a formula or calculation built piece by piece. items = the tokens in order (label only, e.g. "LTV", "=", "€4", "×", "75%"); big = the result shown last (e.g. "= €30") or "".
+- "bars": a mini bar chart of 2 to 5 numbers that appear in the material. heading; items: label + value.
+- "analogy": emoji = the idea, emoji2 = an everyday thing it is like; heading = "X is like Y" (max 10 words); items = one item whose label explains why (max 14 words).
+- "example": a concrete example or quote from the material. heading = "Example" or a short label; big = the example (max 25 words).
+- "bullets": only when nothing more visual fits. heading; items = 2 to 4 short points.
+Prefer visual kinds (steps, compare, number, equation, bars, analogy, timeline) and vary them between concepts. Only use numbers that are in the material.`;
+
+const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+
+export function cleanScenes(scenes) {
+  const out = [];
+  for (const s of (Array.isArray(scenes) ? scenes : []).slice(0, 7)) {
+    if (!s || !SCENE_KINDS.includes(s.kind)) continue;
+    const narration = clean(s.narration, 220);
+    if (!narration) continue;
+    const max = s.kind === 'equation' ? 9 : s.kind === 'compare' ? 2 : s.kind === 'analogy' ? 1 : 5;
+    const items = (Array.isArray(s.items) ? s.items : []).slice(0, max)
+      .map((it) => ({ label: clean(it?.label, 60), detail: clean(it?.detail, 120), value: num(it?.value) }))
+      .filter((it) => it.label);
+    out.push({
+      kind: s.kind, narration, heading: clean(s.heading, 120), emoji: clean(s.emoji, 8), emoji2: clean(s.emoji2, 8),
+      big: clean(s.big, 160), count_to: Math.max(0, Math.min(1e9, num(s.count_to))), items,
+    });
+  }
+  return out.length >= 2 ? out : null;
+}

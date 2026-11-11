@@ -5,7 +5,7 @@
       "maxDuration": 120
     },
     "api/video.js": {
-      "maxDuration": 120
+      "maxDuration": 300
     },
     "api/explain.js": {
       "maxDuration": 60

@@ -3,8 +3,8 @@
 Your IE lectures, turned into a 5-minute swipeable feed: swipe to learn, swipe to test, swipe to reinforce.
 
 - `/` landing page · `/signup` and `/login` (Supabase email + password) · `/app/` the feed app (logged-in only)
-- **Make a feed:** upload a lecture PDF (or paste notes) → `api/generate.js` sends it to Claude → the feed is saved to your account
-- **Turn a video into a feed:** paste a YouTube link → `api/video.js` fetches its captions (or the student pastes the transcript) → Claude writes a TL;DR card and one card per idea with a small diagram (steps, timeline, compare or a big stat), quick checks and a "watch this moment" clip
+- **Make a feed:** upload a lecture PDF (or paste notes) → `api/generate.js` asks Claude for 1–5 animated explainers (a storyboard of scenes with narration per key idea) plus quick checks → the feed is saved to your account. The app plays each storyboard as a short motion-graphics video with the phone's voice and subtitles.
+- **Turn a video into a feed:** paste a YouTube link → `api/video.js` gets a timestamped transcript from Google's Gemini API (or the student pastes the transcript) → Claude writes a TL;DR card and one card per idea with a small diagram (steps, timeline, compare or a big stat), quick checks and a "watch this moment" clip
 - **Reels:** every feed plays as full-screen reels with side buttons (❤️ save, 🔁 explain it differently, 🔊 video sound, ↗ share), double-tap to save, and the matching video moment playing behind video cards
 - **For You:** one endless feed mixing every feed you've made; cards you missed or saved come back about every third swipe
 - **Saved per student in Supabase:** feeds, scores, what's left to review, saved cards, and video recall notes (Row Level Security on every table)
@@ -29,6 +29,8 @@ Import this repo in Vercel (framework preset: **Other**, no build command) and a
 | `SUPABASE_URL` | Supabase Project URL | public |
 | `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable/anon key | public |
 | `ANTHROPIC_API_KEY` | your Claude API key | **secret: server only** |
+| `GEMINI_API_KEY` | free key from [Google AI Studio](https://aistudio.google.com/apikey), used only to read YouTube videos | **secret: server only** |
+| `GEMINI_MODEL` | optional, default `gemini-flash-latest` | – |
 | `LOOP_DAILY_FEED_LIMIT` | optional, default `10` | – |
 
 The browser only ever gets the two public Supabase values (through `/api/config.js`). The Claude key stays on the server. Don't commit any keys; `.env*` is in `.gitignore`.
@@ -46,7 +48,7 @@ npx vercel dev
 - `app/index.html` the feed engine, demo feed, YouTube clipping, your feeds, generate screen
 - `js/supabase.js` the shared browser Supabase client
 - `api/generate.js` checks the student's login, rate-limits, calls Claude (`claude-opus-5-5`, structured JSON output), saves the feed with the student's own token so RLS applies
-- `api/video.js` YouTube captions → visual video feed (same login, limit and saving as generate)
+- `api/video.js` YouTube link → Gemini transcript → Claude storyboards → video feed (same login, limit and saving as generate)
 - `api/explain.js` the 🔁 button: Claude re-explains one card (cached per student in `card_state`, 30 a day)
 - `api/_shared.js` login check, daily limit, Claude call and saving, shared by both
 - `api/config.js` serves the public Supabase URL + key
