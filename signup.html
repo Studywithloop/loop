@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>loop. · create your account</title>
+<meta name="theme-color" content="#0D0D0F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%237A3CF0'/%3E%3Cpath d='M12 32c0-5 4-9 9-9 9 0 13 18 22 18 5 0 9-4 9-9s-4-9-9-9c-9 0-13 18-22 18-5 0-9-4-9-9z' fill='none' stroke='%23F4F2F6' stroke-width='6'/%3E%3Crect x='50' y='44' width='7' height='7' rx='1.5' fill='%23F4F2F6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,700..800&display=swap">
+<link rel="stylesheet" href="/css/auth.css">
+<script src="/api/config.js"></script>
+</head>
+<body data-mode="signup">
+<main class="auth">
+  <a class="wm" href="/" aria-label="loop. home">loop<i></i></a>
+  <h1>join the loop<span class="dot">.</span></h1>
+  <form id="authForm" novalidate>
+    <div class="field"><label for="signup-email">Email</label><input id="signup-email" data-testid="signup-email" name="email" type="email" autocomplete="email" required placeholder="you@student.ie.edu"></div>
+    <div class="field"><label for="signup-password">Password</label><input id="signup-password" data-testid="signup-password" name="password" type="password" autocomplete="new-password" minlength="8" required placeholder="at least 8 characters"></div>
+    <button class="btn btn-violet" id="signup-submit" data-testid="signup-submit" type="submit" disabled>create account</button>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+  </form>
+  <p class="alt">Already have an account? <a href="/login">Log in</a></p>
+</main>
+<script type="module" src="/js/auth-page.js"></script>
+</body>
+</html>

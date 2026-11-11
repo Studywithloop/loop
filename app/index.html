@@ -109,13 +109,37 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--paper);color:var(--black);font-weight:700;font-size:14px;padding:10px 16px;border-radius:999px;z-index:20}
 @media (prefers-reduced-motion: reduce){.btn,.bar i{transition:none}}
+
+/* account + saved feeds */
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.who span{font-size:13px;color:var(--grey-light);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw}
+.who button{background:none;border:0;color:var(--lavender);font-weight:700;font-size:14px;padding:6px 0;text-decoration:underline}
+.mine{display:grid;gap:10px}
+.mine h2{font-size:22px;font-weight:800;font-style:italic}
+.mine ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.mine li{display:flex;align-items:center;gap:10px;background:var(--black-2);border-radius:18px;padding:12px 14px}
+.mine li .open{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0}
+.mine li b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mine li small{font-size:13px;color:var(--grey-light)}
+.mine li .rv{flex:none;border:0;border-radius:999px;background:var(--violet);color:#fff;font-weight:800;font-size:13px;padding:8px 12px}
+.mine li .del{flex:none;border:0;background:none;color:var(--grey-light);font-size:18px;padding:4px 6px}
+.mine .empty{font-size:14px;color:var(--grey-light)}
+.drop{display:grid;gap:6px;place-items:center;text-align:center;border:2px dashed var(--black-3);border-radius:18px;padding:22px 16px;cursor:pointer}
+.drop:hover,.drop:focus-within{border-color:var(--violet)}
+.drop b{font-size:17px}
+.drop small{font-size:13px;color:var(--grey-light)}
+.drop input{position:absolute;width:1px;height:1px;opacity:0}
+.or{font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--grey-light);text-align:center}
+.btn[disabled]{opacity:.6;cursor:default}
+.msg.ok{color:#9FE3BF}
 </style>
+<script src="/api/config.js"></script>
 </head>
 <body>
 
 <!-- HOME -->
 <main id="home" class="home">
-  <header><a class="wm" href="../" style="font-size:34px">loop<i></i></a><a href="../">about loop.</a></header>
+  <header><a class="wm" href="../" style="font-size:34px">loop<i></i></a><div class="who"><span id="whoEmail"></span><button type="button" id="logout" data-testid="logout">log out</button></div></header>
   <div>
     <p class="kicker" style="color:var(--lavender)">MVP · beta</p>
     <h1>swipe to learn.<br>swipe to test.<br>swipe to reinforce<span class="dot">.</span></h1>
@@ -134,9 +158,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
   <button class="choice c3" id="goMake">
     <span class="kicker">your own slides</span>
     <h2>Make a feed from your material</h2>
-    <p>Turn a lecture deck or notes into your own feed in about 2 minutes.</p>
+    <p>Upload a lecture PDF or paste your notes. loop. builds your feed in about a minute.</p>
   </button>
-  <p class="saved" id="savedInfo" hidden></p>
+  <section class="mine" aria-labelledby="mineTitle">
+    <h2 id="mineTitle">your feeds<span class="dot">.</span></h2>
+    <ul id="mineList"></ul>
+    <p class="empty" id="mineEmpty">Loading your feeds…</p>
+  </section>
 </main>
 
 <!-- VIDEO SETUP -->
@@ -158,18 +186,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
 <section id="makeSetup" class="setup" hidden>
   <button class="back" data-home>← back</button>
   <h1>make your own feed<span class="dot">.</span></h1>
-  <p>Beta: for now loop. uses your own ChatGPT, Claude or Gemini to read your slides. Three steps:</p>
-  <ol class="steps">
-    <li><b>1. Copy the loop. prompt</b>
-      <div class="prompt" id="promptText"></div>
-      <button class="btn btn-white" id="copyPrompt" style="justify-self:start">copy prompt</button></li>
-    <li><b>2. Paste it into ChatGPT, Claude or Gemini and attach your lecture PDF or slides.</b></li>
-    <li><b>3. Paste the answer here</b>
-      <textarea id="feedJson" placeholder='{"title": "...", "cards": [ ... ]}'></textarea>
-      <button class="btn btn-violet" id="buildOwn" style="justify-self:start">build my feed</button>
-      <p class="msg" id="makeMsg" role="status"></p></li>
-  </ol>
-  <p style="font-size:14px">Prefer we do it for you? Email your slides to <b style="user-select:all">apploopstudy@gmail.com</b> and we’ll build your feed.</p>
+  <p>Upload one lecture at a time. loop. reads it and builds 6 to 10 short cards with a quick check every two cards. Every card links back to its slide.</p>
+  <label class="drop" for="matFile">
+    <b id="fileLabel">choose a lecture PDF</b>
+    <small>PDF, TXT or Markdown. Slides in PowerPoint or Keynote? Export them as PDF first.</small>
+    <input id="matFile" type="file" accept="application/pdf,.pdf,text/plain,.txt,.md">
+  </label>
+  <p class="or">or</p>
+  <div class="field"><label for="matText">Paste your notes or slide text</label>
+    <textarea id="matText" placeholder="Paste a lecture's notes, slide text or a reading here…" style="min-height:160px"></textarea>
+  </div>
+  <button class="btn btn-violet" id="buildOwn" style="align-self:flex-start">build my feed</button>
+  <p class="msg" id="makeMsg" role="status" aria-live="polite"></p>
+  <p style="font-size:13px;color:var(--grey-light)">Your material is sent to Claude (Anthropic’s AI) only to build this feed. The feed is saved to your account; your file isn’t stored.</p>
 </section>
 
 <!-- FEED -->
@@ -181,7 +210,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
 
 <div class="toast" id="toast" role="status" hidden></div>
 
-<script>
+<script type="module">
 // Feedback rows go into the loop. sign-ups Google Sheet (same form as the landing page).
 var GOOGLE_FORM = {
   action: 'https://docs.google.com/forms/d/e/1FAIpQLSfVVpaw_qYGOwYuN5uXgntf53K91vngEfA0g8UMJGXb-MZZZA/formResponse',
@@ -213,30 +242,71 @@ var DEMO = {
   ]
 };
 
-var PROMPT = 'You are loop., a microlearning app for university students. Read the lecture material I attached and turn it into a swipeable revision feed.\n\nRules:\n- Use ONLY the attached material. Do not invent facts.\n- 6 to 10 concept cards. Each body: max 45 words, plain language.\n- Each concept card may have a short real example from the material.\n- After every 2 concept cards, add 1 multiple-choice quiz card with 3 options about those concepts.\n- Add a "source" to every concept card, like "slide 4" or "page 2".\n\nReply with ONLY this JSON, nothing else:\n{\n  "title": "Course · topic",\n  "cards": [\n    {"type": "concept", "id": "c1", "title": "...", "body": "...", "example": "...", "source": "slide 3"},\n    {"type": "quiz", "about": "c1", "question": "...", "options": ["...", "...", "..."], "answer": 0, "explain": "..."}\n  ]\n}\n"answer" is the index (0, 1 or 2) of the correct option.';
+// Everything below runs as the logged-in student. Data lives in Supabase and Row Level Security
+// keeps each student's feeds, results and notes private to them.
+import { supabase, configured, currentUser, accessToken, logout } from '/js/supabase.js';
 
-(function(){
+(async function(){
   var $ = function(id){ return document.getElementById(id); };
   var screens = ['home', 'videoSetup', 'makeSetup', 'feedWrap'];
   function show(id){ screens.forEach(function(s){ $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
-  function store(k, v){ try { if (v === undefined) return JSON.parse(localStorage.getItem('loop.' + k) || 'null'); localStorage.setItem('loop.' + k, JSON.stringify(v)); } catch (e) { return null; } }
   function toast(t){ var el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function(){ el.hidden = true; }, 2200); }
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function mmss(s){ s = Math.round(s); return Math.floor(s/60) + ':' + ('0' + (s % 60)).slice(-2); }
+
+  /* ---------- account ---------- */
+  var user = configured ? await currentUser() : null;
+  if (!user) { location.replace('/login?next=' + encodeURIComponent('/app/')); return; }
+  $('whoEmail').textContent = user.email || '';
+  $('logout').addEventListener('click', logout);
+  supabase.auth.onAuthStateChange(function(event){ if (event === 'SIGNED_OUT') location.replace('/login'); });
 
   document.querySelectorAll('[data-home]').forEach(function(b){ b.addEventListener('click', function(){ show('home'); }); });
   $('goDemo').addEventListener('click', function(){ openFeed(DEMO); });
   $('goVideo').addEventListener('click', function(){ show('videoSetup'); });
   $('goMake').addEventListener('click', function(){ show('makeSetup'); });
-  $('promptText').textContent = PROMPT;
-  $('copyPrompt').addEventListener('click', function(){
-    var b = this;
-    function sel(){ var r = document.createRange(); r.selectNodeContents($('promptText')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'selected, press copy'; }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(PROMPT).then(function(){ b.textContent = 'copied'; }, sel); else sel();
-  });
 
-  var mine = store('ownFeed');
-  if (mine && mine.cards) { var info = $('savedInfo'); info.hidden = false; info.innerHTML = 'Your last feed: <a href="#" id="reopen">' + esc(mine.title) + '</a>'; $('reopen').addEventListener('click', function(e){ e.preventDefault(); openFeed(mine); }); }
+  /* ---------- your feeds (Supabase) ---------- */
+  var myFeeds = [], lastRun = {};
+  function rowToFeed(r){ return { id: r.id, title: r.title, source: r.source || r.title, cards: r.cards }; }
+  function feedByKey(key){ if (key === DEMO.id) return DEMO; var r = myFeeds.find(function(f){ return f.id === key; }); return r ? rowToFeed(r) : null; }
+  async function loadMine(){
+    var res = await Promise.all([
+      supabase.from('feeds').select('id, title, source, cards, created_at').order('created_at', { ascending: false }).limit(50),
+      supabase.from('attempts').select('feed_key, correct, total, missed, created_at').order('created_at', { ascending: false }).limit(300)
+    ]);
+    if (res[0].error || res[1].error) { $('mineEmpty').hidden = false; $('mineEmpty').textContent = 'Couldn’t load your feeds. Refresh to try again.'; return; }
+    myFeeds = res[0].data; lastRun = {};
+    res[1].data.forEach(function(a){ if (!lastRun[a.feed_key]) lastRun[a.feed_key] = a; });
+    renderMine();
+  }
+  function renderMine(){
+    var items = myFeeds.map(function(f){ return { key: f.id, title: f.title, own: true }; });
+    if (lastRun[DEMO.id]) items.push({ key: DEMO.id, title: DEMO.title, own: false });
+    $('mineEmpty').hidden = items.length > 0;
+    $('mineEmpty').textContent = 'Nothing here yet. Make a feed from your slides, or try the demo.';
+    $('mineList').innerHTML = items.map(function(it){
+      var run = lastRun[it.key], toReview = run && Array.isArray(run.missed) ? run.missed.length : 0;
+      var sub = run ? 'last run ' + run.correct + '/' + run.total + (toReview ? ' · ' + toReview + ' to review' : ' · all locked in') : 'not played yet';
+      return '<li><button class="open" data-act="open" data-key="' + esc(it.key) + '"><b>' + esc(it.title) + '</b><small>' + esc(sub) + '</small></button>' +
+        (toReview ? '<button class="rv" data-act="review" data-key="' + esc(it.key) + '">review ' + toReview + '</button>' : '') +
+        (it.own ? '<button class="del" data-act="delete" data-key="' + esc(it.key) + '" aria-label="Delete ' + esc(it.title) + '">✕</button>' : '') + '</li>';
+    }).join('');
+  }
+  $('mineList').addEventListener('click', async function(e){
+    var b = e.target.closest('button[data-act]'); if (!b) return;
+    var key = b.dataset.key, feed = feedByKey(key);
+    if (b.dataset.act === 'open' && feed) openFeed(feed);
+    if (b.dataset.act === 'review' && feed) openReview(feed, lastRun[key].missed);
+    if (b.dataset.act === 'delete') {
+      if (!confirm('Delete this feed? This can’t be undone.')) return;
+      var del = await supabase.from('feeds').delete().eq('id', key);
+      if (del.error) { toast('Couldn’t delete it. Try again.'); return; }
+      await supabase.from('attempts').delete().eq('feed_key', key);
+      myFeeds = myFeeds.filter(function(f){ return f.id !== key; }); delete lastRun[key]; renderMine(); toast('Feed deleted');
+    }
+  });
+  loadMine();
 
   /* ---------- feed engine ---------- */
   var state = null;
@@ -321,7 +391,10 @@ var PROMPT = 'You are loop., a microlearning app for university students. Read t
     state.results[i] = v === 'got';
     if (v === 'fuzzy') state.fuzzy.push(c);
     var note = document.querySelector('[data-note="' + i + '"]').value.trim();
-    if (note) { var notes = store('notes') || {}; notes[state.feed.id + ':' + c.start] = note; store('notes', notes); }
+    if (note) {
+      supabase.from('notes').upsert({ user_id: user.id, feed_key: String(state.feed.id).slice(0, 100), start_sec: Math.round(c.start), body: note.slice(0, 1000) }, { onConflict: 'user_id,feed_key,start_sec' })
+        .then(function(r){ if (r.error) toast('Couldn’t save your note.'); });
+    }
     this.parentNode.querySelectorAll('button').forEach(function(b){ b.disabled = true; b.style.opacity = b === this ? 1 : .4; }, this);
     this.closest('.panel').querySelector('.hint').textContent = v === 'got' ? 'locked in. swipe up ↑' : 'we’ll replay that part at the end ↑';
   }
@@ -330,6 +403,7 @@ var PROMPT = 'You are loop., a microlearning app for university students. Read t
     var keys = Object.keys(state.results), right = keys.filter(function(k){ return state.results[k]; }).length;
     var isVideo = state.feed.cards.some(function(c){ return c.type === 'clip'; });
     var missedConcepts = state.feed.cards.filter(function(c){ return c.type === 'concept' && state.missed.indexOf(c.id) > -1; });
+    if (keys.length) saveAttempt(right, keys.length, isVideo ? [] : missedConcepts.map(function(c){ return c.id; }));
     var reviewBtn = '';
     if (!state.isReview && missedConcepts.length) reviewBtn = '<button class="btn btn-violet" id="doReview">swipe to reinforce (' + missedConcepts.length + ')</button>';
     if (!state.isReview && isVideo && state.fuzzy.length) reviewBtn = '<button class="btn btn-violet" id="doReview">replay the fuzzy parts (' + state.fuzzy.length + ')</button>';
@@ -352,11 +426,22 @@ var PROMPT = 'You are loop., a microlearning app for university students. Read t
     var rv = $('doReview');
     if (rv) rv.addEventListener('click', function(){
       if (isVideo) openFeed({ id: state.feed.id, title: state.feed.title, source: state.feed.source, cards: state.fuzzy.map(function(r, n, all){ return { type: 'clip', vid: r.vid, start: r.start, end: r.end, n: n + 1, total: all.length }; }) }, { review: true });
-      else {
-        var ids = state.missed, cards = [];
-        state.feed.cards.forEach(function(c){ if (c.type === 'concept' && ids.indexOf(c.id) > -1) { cards.push(c); state.feed.cards.forEach(function(q){ if (q.type === 'quiz' && q.about === c.id) cards.push(q); }); } });
-        openFeed({ id: state.feed.id, title: state.feed.title, source: state.feed.source, cards: cards }, { review: true });
-      }
+      else openReview(state.feed, state.missed);
+    });
+  }
+  // "swipe to reinforce": replay only the missed concepts, each followed by its quiz.
+  function openReview(feed, ids){
+    var cards = [];
+    feed.cards.forEach(function(c){ if (c.type === 'concept' && ids.indexOf(c.id) > -1) { cards.push(c); feed.cards.forEach(function(q){ if (q.type === 'quiz' && q.about === c.id) cards.push(q); }); } });
+    if (!cards.length) { toast('Nothing to review here'); return; }
+    openFeed({ id: feed.id, title: feed.title, source: feed.source, cards: cards }, { review: true });
+  }
+  // One row per finished run, so the home screen can show the last score and what's left to review.
+  function saveAttempt(correct, total, missed){
+    var row = { user_id: user.id, feed_key: String(state.feed.id).slice(0, 100), feed_title: String(state.feed.title || '').slice(0, 200), correct: correct, total: total, missed: missed };
+    supabase.from('attempts').insert(row).then(function(r){
+      if (r.error) { toast('Couldn’t save your score.'); return; }
+      lastRun[row.feed_key] = row; renderMine();
     });
   }
   function sendFeedback(right, total, btn){
@@ -422,24 +507,76 @@ var PROMPT = 'You are loop., a microlearning app for university students. Read t
     }).then(function(){ btn.disabled = false; btn.textContent = 'cut it into clips'; });
   });
 
-  /* ---------- make your own ---------- */
-  $('buildOwn').addEventListener('click', function(){
-    var raw = $('feedJson').value, msg = $('makeMsg'); msg.textContent = '';
-    var start = raw.indexOf('{'), end = raw.lastIndexOf('}');
+  /* ---------- make your own: upload or paste → /api/generate (Claude) → saved feed ---------- */
+  var PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  var MAX_TEXT = 200000, MAX_PDF_BYTES = 3 * 1024 * 1024;
+  var picked = null; // { text, filename } or { pdf, filename } from the chosen file
+  function loadPdfJs(){
+    return loadPdfJs.p || (loadPdfJs.p = new Promise(function(res, rej){
+      var s = document.createElement('script'); s.src = PDFJS + 'pdf.min.js';
+      s.onload = function(){ window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.js'; res(window.pdfjsLib); };
+      s.onerror = function(){ loadPdfJs.p = null; rej(new Error('pdf.js failed to load')); };
+      document.head.appendChild(s);
+    }));
+  }
+  async function pdfText(file){
+    var lib = await loadPdfJs(), pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise, parts = [];
+    for (var i = 1; i <= pdf.numPages; i++) {
+      var tc = await (await pdf.getPage(i)).getTextContent();
+      var t = tc.items.map(function(it){ return it.str; }).join(' ').replace(/\s+/g, ' ').trim();
+      if (t) parts.push('[page ' + i + ']\n' + t);
+    }
+    return { text: parts.join('\n\n'), pages: pdf.numPages };
+  }
+  function asBase64(file){
+    return new Promise(function(res, rej){ var r = new FileReader(); r.onload = function(){ res(String(r.result).split(',')[1]); }; r.onerror = rej; r.readAsDataURL(file); });
+  }
+  $('matFile').addEventListener('change', async function(){
+    var file = this.files[0], msg = $('makeMsg'), label = $('fileLabel');
+    picked = null; msg.textContent = ''; msg.classList.remove('ok');
+    if (!file) { label.textContent = 'choose a lecture PDF'; return; }
+    label.textContent = 'reading ' + file.name + '…';
     try {
-      var f = JSON.parse(raw.slice(start, end + 1));
-      if (!f || !Array.isArray(f.cards) || !f.cards.length) throw new Error('no cards');
-      f.cards = f.cards.filter(function(c){
-        if (c.type === 'quiz') return c.question && Array.isArray(c.options) && c.options.length > 1 && c.answer >= 0 && c.answer < c.options.length;
-        c.type = 'concept'; return c.title && c.body;
-      });
-      if (!f.cards.length) throw new Error('no valid cards');
-      f.cards.forEach(function(c, i){ if (c.type === 'concept' && !c.id) c.id = 'c' + i; });
-      f.id = 'own'; f.title = f.title || 'My feed'; f.source = f.title;
-      store('ownFeed', f);
-      openFeed(f);
+      if (/\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
+        var r = await pdfText(file);
+        if (r.text.length >= 200) picked = { text: r.text, filename: file.name };
+        else if (file.size <= MAX_PDF_BYTES) picked = { pdf: await asBase64(file), filename: file.name }; // scanned slides: let Claude read the images
+        else throw new Error('This PDF has no selectable text and is over 3 MB. Try a smaller export.');
+        label.textContent = file.name + ' · ' + r.pages + (r.pages === 1 ? ' page' : ' pages');
+      } else {
+        picked = { text: await file.text(), filename: file.name };
+        label.textContent = file.name;
+      }
+      if (picked.text && picked.text.length > MAX_TEXT) { picked = null; throw new Error('That file is very long. Upload one lecture at a time.'); }
+      msg.textContent = 'Ready. Press “build my feed”.'; msg.classList.add('ok');
     } catch (e) {
-      msg.textContent = 'We couldn’t read that. Paste the whole answer from the AI, starting with { and ending with }.';
+      picked = null; this.value = ''; label.textContent = 'choose a lecture PDF';
+      msg.textContent = e && e.message && !/pdf\.js/.test(e.message) ? e.message : 'We couldn’t read that file. Try another one, or paste the text below.';
+    }
+  });
+  $('buildOwn').addEventListener('click', async function(){
+    var btn = this, msg = $('makeMsg'), typed = $('matText').value.trim();
+    msg.textContent = ''; msg.classList.remove('ok');
+    var payload = picked || (typed ? { text: typed } : null);
+    if (!payload) { msg.textContent = 'Choose a file or paste your notes first.'; return; }
+    if (payload.text && payload.text.length < 200) { msg.textContent = 'That’s a bit short. Paste at least a few paragraphs.'; return; }
+    if (payload.text && payload.text.length > MAX_TEXT) { msg.textContent = 'That’s very long. Paste one lecture at a time.'; return; }
+    btn.disabled = true; btn.textContent = 'reading your material…'; msg.classList.add('ok');
+    var steps = ['picking the key concepts…', 'writing the quick checks…', 'almost there…'], n = 0;
+    var tick = setInterval(function(){ if (n < steps.length) btn.textContent = steps[n++]; }, 12000);
+    try {
+      var token = await accessToken();
+      var res = await fetch('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify(payload) });
+      var data = await res.json().catch(function(){ return {}; });
+      if (res.status === 401) { location.replace('/login?next=' + encodeURIComponent('/app/')); return; }
+      if (!res.ok || !data.feed) throw new Error(data.error || 'Something went wrong building your feed. Try again.');
+      myFeeds.unshift(data.feed); renderMine();
+      picked = null; $('matFile').value = ''; $('fileLabel').textContent = 'choose a lecture PDF'; $('matText').value = ''; msg.textContent = '';
+      openFeed(rowToFeed(data.feed));
+    } catch (e) {
+      msg.classList.remove('ok'); msg.textContent = e.message || 'Couldn’t reach loop. Check your connection.';
+    } finally {
+      clearInterval(tick); btn.disabled = false; btn.textContent = 'build my feed';
     }
   });
 })();
