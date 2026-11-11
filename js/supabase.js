@@ -1,4 +1,4 @@
-// Shared Supabase client for the browser. The page must load /api/config.js first,
+// Shared Supabase client for the browser. The page must load /api/config first,
 // which sets window.LOOP_CONFIG with the public Supabase URL and publishable key.
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
 
