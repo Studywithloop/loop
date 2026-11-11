@@ -8,11 +8,8 @@
 // Public values also used here: NEXT_PUBLIC_SUPABASE_URL / SUPABASE_URL and the publishable (anon) key.
 // The feed row is inserted with the student's own token, so Row Level Security still applies.
 
-import Anthropic from '@anthropic-ai/sdk';
-import { createClient } from '@supabase/supabase-js';
+import { startFeedRequest, askClaude, saveFeed, clean, readBody } from './_shared.js';
 
-const MODEL = 'claude-opus-5-5';
-const DAILY_LIMIT = Number(process.env.LOOP_DAILY_FEED_LIMIT || 10);
 const MIN_TEXT = 200;            // characters: anything shorter isn't enough to build a feed from
 const MAX_TEXT = 200_000;        // characters (~50k tokens): a long lecture deck plus readings
 const MAX_PDF_B64 = 4_000_000;   // Vercel's request body limit is 4.5 MB
@@ -74,19 +71,6 @@ const SCHEMA = {
   },
 };
 
-const anthropic = new Anthropic(); // reads ANTHROPIC_API_KEY
-
-function supabaseFor(token) {
-  const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim().replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
-  const key = (process.env.SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || '').trim();
-  return createClient(url, key, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
-const clean = (s, max) => String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
-
 // Turns Claude's grouped answer into the flat card list the app's feed engine plays.
 export function toCards(raw) {
   const cards = [];
@@ -110,25 +94,10 @@ export function toCards(raw) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Use POST.' });
-  }
+  const supabase = await startFeedRequest(req, res);
+  if (!supabase) return;
 
-  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
-  if (!token) return res.status(401).json({ error: 'Please log in first.' });
-
-  const supabase = supabaseFor(token);
-  const { data: userData, error: userError } = await supabase.auth.getUser(token);
-  if (userError || !userData?.user) return res.status(401).json({ error: 'Your session expired. Please log in again.' });
-
-  // Simple cost guard: at most DAILY_LIMIT generated feeds per student per 24 hours.
-  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const { count, error: countError } = await supabase.from('feeds').select('id', { count: 'exact', head: true }).gte('created_at', since);
-  if (countError) return res.status(500).json({ error: 'Could not check your account. Try again in a minute.' });
-  if ((count ?? 0) >= DAILY_LIMIT) return res.status(429).json({ error: `You’ve made ${DAILY_LIMIT} feeds in the last 24 hours. Come back tomorrow for more.` });
-
-  const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body || {};
+  const body = readBody(req);
   let material;
   if (typeof body.pdf === 'string' && body.pdf) {
     if (body.pdf.length > MAX_PDF_B64) return res.status(413).json({ error: 'That PDF is too big to send. Try a smaller file, or paste the text instead.' });
@@ -142,47 +111,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Upload a PDF or paste your notes.' });
   }
 
-  let message;
-  try {
-    message = await anthropic.beta.messages
-      .stream({
-        model: MODEL,
-        max_tokens: 16000,
-        betas: ['server-side-fallback-2026-07-01'],
-        fallbacks: 'default', // if the model declines, the API retries on a fallback model in the same call
-        output_config: { effort: 'medium', format: { type: 'json_schema', schema: SCHEMA } },
-        system: SYSTEM,
-        messages: [{ role: 'user', content: [material, { type: 'text', text: 'Build my loop. feed from this material.' }] }],
-      })
-      .finalMessage();
-  } catch (err) {
-    console.error('Claude request failed', err?.status, err?.message);
-    if (err instanceof Anthropic.RateLimitError) return res.status(503).json({ error: 'loop. is busy right now. Try again in a minute.' });
-    if (err instanceof Anthropic.BadRequestError) return res.status(400).json({ error: 'We couldn’t read that material. If it’s a PDF, try pasting the text instead.' });
-    return res.status(502).json({ error: 'Something went wrong building your feed. Try again.' });
-  }
-
-  if (message.stop_reason === 'refusal') return res.status(422).json({ error: 'We couldn’t build a feed from that material.' });
-  if (message.stop_reason === 'max_tokens') return res.status(422).json({ error: 'That material was too long to finish. Try one lecture at a time.' });
-
-  const text = message.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
-  let raw;
-  try { raw = JSON.parse(text); } catch { return res.status(502).json({ error: 'Something went wrong building your feed. Try again.' }); }
+  const raw = await askClaude(res, {
+    system: SYSTEM,
+    schema: SCHEMA,
+    content: [material, { type: 'text', text: 'Build my loop. feed from this material.' }],
+    unreadable: 'We couldn’t read that material. If it’s a PDF, try pasting the text instead.',
+  });
+  if (!raw) return;
 
   const cards = toCards(raw);
   if (!cards.some((c) => c.type === 'concept')) return res.status(422).json({ error: 'We couldn’t find enough to learn in that material.' });
 
   const title = clean(raw.title, 80) || 'My feed';
-  const source = clean(body.filename, 120) || title;
-  const { data: feed, error: insertError } = await supabase
-    .from('feeds')
-    .insert({ title, source, cards })
-    .select('id, title, source, cards, created_at')
-    .single();
-  if (insertError) {
-    console.error('Saving feed failed', insertError.message);
-    return res.status(500).json({ error: 'Your feed was built but couldn’t be saved. Try again.' });
-  }
-
-  return res.status(200).json({ feed });
+  return saveFeed(res, supabase, { title, source: clean(body.filename, 120) || title, cards });
 }

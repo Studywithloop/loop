@@ -132,6 +132,39 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
 .or{font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--grey-light);text-align:center}
 .btn[disabled]{opacity:.6;cursor:default}
 .msg.ok{color:#9FE3BF}
+
+/* video feeds: intro card, emoji, visuals, jump-to-moment */
+details.more{background:var(--black-2);border-radius:18px;padding:14px 16px}
+details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--grey-light)}
+.p-intro{background:var(--violet);color:#FFFFFF}
+.p-intro .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:18px;display:block;background:rgba(0,0,0,.2)}
+.p-intro .hook{font-size:26px;font-weight:800;font-style:italic;letter-spacing:-.03em;line-height:1.1}
+.tldr{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tldr li{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.14);border-radius:16px;padding:12px 14px;font-weight:700;font-size:16px;line-height:1.35}
+.tldr li span{font-size:22px;line-height:1}
+.emo{font-size:46px;line-height:1}
+.vz{margin:0;padding:0;list-style:none}
+.vz.steps,.vz.tl{display:grid;gap:8px;counter-reset:vz}
+.vz.steps li{counter-increment:vz;display:grid;grid-template-columns:30px 1fr;gap:2px 10px;align-items:start;background:rgba(255,255,255,.6);border-radius:14px;padding:10px 12px}
+.vz.steps li::before{content:counter(vz);grid-row:span 2;width:30px;height:30px;border-radius:999px;background:var(--violet);color:#FFFFFF;font-weight:800;display:grid;place-items:center;font-size:15px}
+.vz b{font-size:15px;line-height:1.3}
+.vz span{font-size:14px;line-height:1.4;opacity:.8}
+.vz.tl{position:relative;padding-left:22px}
+.vz.tl::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--violet);opacity:.5}
+.vz.tl li{position:relative;display:grid;gap:2px}
+.vz.tl li::before{content:"";position:absolute;left:-20px;top:4px;width:12px;height:12px;border-radius:999px;background:var(--violet);box-shadow:0 0 0 3px var(--lavender)}
+.vz.cmp{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:stretch}
+.vz.cmp>div{display:grid;gap:4px;align-content:start;background:rgba(255,255,255,.6);border-radius:14px;padding:12px}
+.vz.cmp>div:first-child{box-shadow:inset 0 3px 0 var(--violet)}
+.vz.cmp>div:last-child{box-shadow:inset 0 3px 0 var(--black)}
+.vz.cmp .vs{background:none!important;box-shadow:none!important;padding:0!important;align-self:center;font-weight:800;font-style:italic;font-size:15px}
+.vz.stat{display:grid;gap:4px;background:var(--black);color:var(--white);border-radius:18px;padding:16px 18px}
+.vz.stat b{font-size:52px;font-weight:800;font-style:italic;letter-spacing:-.04em;line-height:1;color:var(--lavender)}
+.vz.stat span{font-size:15px;opacity:.9}
+.again .vz.steps li,.again .vz.cmp>div{background:rgba(255,255,255,.18)}
+.again .vz.stat b{color:#FFFFFF}
+.watch{align-self:flex-start;border:0;border-radius:999px;background:var(--black);color:var(--white);font-weight:800;font-size:14px;padding:10px 16px}
+.moment .clip{margin-top:4px}
 </style>
 <script src="/api/config"></script>
 </head>
@@ -152,8 +185,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
   </button>
   <button class="choice c2" id="goVideo">
     <span class="kicker" style="color:var(--lavender)">for assigned videos</span>
-    <h2>Clip a class video</h2>
-    <p>Paste a YouTube link. loop. cuts it into short clips and stops every two clips to check you got the key idea.</p>
+    <h2>Turn a video into a feed</h2>
+    <p>Paste a YouTube link. loop. turns it into a visual summary with diagrams, quick checks and jump-to-the-moment clips.</p>
   </button>
   <button class="choice c3" id="goMake">
     <span class="kicker">your own slides</span>
@@ -170,15 +203,24 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
 <!-- VIDEO SETUP -->
 <section id="videoSetup" class="setup" hidden>
   <button class="back" data-home>← back</button>
-  <h1>clip a class video<span class="dot">.</span></h1>
-  <p>Paste the YouTube link your professor assigned. loop. splits it into short clips. Every two clips it pauses and asks what the key idea was, so you actively review instead of just watching.</p>
+  <h1>turn a video into a feed<span class="dot">.</span></h1>
+  <p>Paste the YouTube link your professor assigned. loop. reads the video and builds a fun visual summary: the TL;DR, one idea per card with a diagram, quick checks, and a button to jump to that exact moment in the video.</p>
   <div class="field"><label for="ytUrl">YouTube link</label><input id="ytUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off"></div>
-  <div class="field"><label for="clipLen">Clip length</label>
-    <select id="clipLen"><option value="60">60 seconds</option><option value="90" selected>90 seconds</option><option value="120">2 minutes</option></select>
+  <div class="field" id="transcriptField" hidden>
+    <label for="ytTranscript">Paste the video’s transcript</label>
+    <p style="font-size:13px">On YouTube on a computer: under the video, click <b>…more</b>, then <b>Show transcript</b>. Select all the text in the transcript panel, copy it and paste it here.</p>
+    <textarea id="ytTranscript" placeholder="0:00 Welcome back everyone…" style="min-height:140px"></textarea>
   </div>
-  <div class="field" id="durField" hidden><label for="durMin">Video length in minutes (we couldn’t read it automatically)</label><input id="durMin" type="text" inputmode="decimal" placeholder="e.g. 14"></div>
-  <button class="btn btn-violet" id="buildVideo">cut it into clips</button>
-  <p class="msg" id="videoMsg" role="status"></p>
+  <button class="btn btn-violet" id="summarizeVideo" style="align-self:flex-start">make my visual feed</button>
+  <p class="msg" id="videoMsg" role="status" aria-live="polite"></p>
+  <details class="more">
+    <summary>or just cut it into clips (no AI)</summary>
+    <div class="field" style="margin-top:12px"><label for="clipLen">Clip length</label>
+      <select id="clipLen"><option value="60">60 seconds</option><option value="90" selected>90 seconds</option><option value="120">2 minutes</option></select>
+    </div>
+    <div class="field" id="durField" hidden><label for="durMin">Video length in minutes (we couldn’t read it automatically)</label><input id="durMin" type="text" inputmode="decimal" placeholder="e.g. 14"></div>
+    <button class="btn btn-ghost" id="buildVideo" style="margin-top:12px">cut it into clips</button>
+  </details>
   <div id="ytProbe" style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none"></div>
 </section>
 
@@ -343,12 +385,32 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
         '<div class="row"><button class="btn btn-white" data-recall="' + i + '" data-v="got">I’ve got it</button><button class="btn btn-ghost" data-recall="' + i + '" data-v="fuzzy">still fuzzy</button></div>' +
         '<p class="hint">writing it down beats re-watching</p></div></section>';
     }
+    if (c.type === 'intro') {
+      return '<section class="card" data-i="' + i + '"><div class="panel p-intro">' +
+        '<span class="kicker">the TL;DR</span>' +
+        '<img class="thumb" alt="" src="https://i.ytimg.com/vi/' + encodeURIComponent(c.vid) + '/hqdefault.jpg">' +
+        (c.hook ? '<p class="hook">' + esc(c.hook) + '</p>' : '') +
+        '<ul class="tldr">' + (c.takeaways || []).map(function(t){ return '<li><span aria-hidden="true">' + esc(t.emoji) + '</span>' + esc(t.text) + '</li>'; }).join('') + '</ul>' +
+        '<p class="hint" style="color:rgba(255,255,255,.75)">swipe up for the details ↑</p></div></section>';
+    }
     return '<section class="card" data-i="' + i + '"><div class="panel p-concept' + (again ? ' again' : '') + '">' +
       '<span class="kicker">' + (again ? 'back for review' : 'swipe to learn') + '</span>' +
+      (c.emoji ? '<span class="emo" aria-hidden="true">' + esc(c.emoji) + '</span>' : '') +
       '<h2>' + esc(c.title) + '</h2><p class="body">' + esc(c.body) + '</p>' +
+      visualHtml(c.visual) +
       (c.example ? '<p class="ex"><b>Example:</b> ' + esc(c.example) + '</p>' : '') +
-      '<p class="src">Source: ' + esc(c.source || state.feed.source || state.feed.title) + '</p>' +
+      (c.vid ? '<button class="watch" data-watch="' + i + '">▶ watch this moment · ' + mmss(c.start || 0) + '</button><div class="moment" hidden></div>' : '') +
+      (c.vid ? '' : '<p class="src">Source: ' + esc(c.source || state.feed.source || state.feed.title) + '</p>') +
       '<p class="hint">swipe up ↑</p></div></section>';
+  }
+  // Little diagrams Claude picks for each video card: steps, timeline, compare or one big stat.
+  function visualHtml(v){
+    if (!v || !v.kind) return '';
+    if (v.kind === 'stat') return '<div class="vz stat"><b>' + esc(v.value) + '</b><span>' + esc(v.label) + '</span></div>';
+    var items = v.items || [];
+    if (v.kind === 'compare' && items.length === 2) return '<div class="vz cmp"><div><b>' + esc(items[0].label) + '</b><span>' + esc(items[0].detail) + '</span></div><div class="vs">vs</div><div><b>' + esc(items[1].label) + '</b><span>' + esc(items[1].detail) + '</span></div></div>';
+    if (v.kind === 'steps' || v.kind === 'timeline') return '<ol class="vz ' + (v.kind === 'steps' ? 'steps' : 'tl') + '">' + items.map(function(it){ return '<li><b>' + esc(it.label) + '</b><span>' + esc(it.detail) + '</span></li>'; }).join('') + '</ol>';
+    return '';
   }
   function endCard(){
     return '<section class="card" data-end="1"><div class="panel p-end" id="endPanel"></div></section>';
@@ -356,6 +418,7 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
   function wire(el){
     el.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click', answer); });
     el.querySelectorAll('[data-recall]').forEach(function(b){ b.addEventListener('click', recall); });
+    el.querySelectorAll('[data-watch]').forEach(function(b){ b.addEventListener('click', watchMoment); });
     el.onscroll = function(){ clearTimeout(wire.t); wire.t = setTimeout(progress, 80); };
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function(entries){
@@ -375,6 +438,16 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
     $('feedCount').textContent = Math.min(i + 1, total) + ' / ' + total;
     $('barFill').style.width = Math.min(100, (i / Math.max(1, total)) * 100) + '%';
     if (i >= total) renderEnd();
+    // Stop any "watch this moment" clip once its card scrolls away.
+    el.querySelectorAll('.moment').forEach(function(m){
+      if (m.hidden || m.closest('.card') === cards[i]) return;
+      m.innerHTML = ''; m.hidden = true; m.previousElementSibling.hidden = false;
+    });
+  }
+  function watchMoment(){
+    var c = state.feed.cards[+this.dataset.watch], box = this.nextElementSibling;
+    box.innerHTML = '<div class="clip"><iframe src="https://www.youtube.com/embed/' + encodeURIComponent(c.vid) + '?start=' + (c.start || 0) + (c.end ? '&end=' + c.end : '') + '&autoplay=1&rel=0&playsinline=1" title="Video moment" allow="autoplay; encrypted-media; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>';
+    box.hidden = false; this.hidden = true;
   }
   function answer(){
     var q = +this.dataset.q, k = +this.dataset.k, card = state.feed.cards[q];
@@ -506,6 +579,37 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
       $('durField').hidden = false; msg.textContent = 'We couldn’t read the video length. Type it in minutes and press the button again.';
     }).then(function(){ btn.disabled = false; btn.textContent = 'cut it into clips'; });
   });
+
+  /* ---------- video → visual feed: /api/video (captions + Claude) → saved feed ---------- */
+  $('summarizeVideo').addEventListener('click', async function(){
+    var btn = this, msg = $('videoMsg'), url = $('ytUrl').value.trim(), tr = $('ytTranscript').value.trim();
+    msg.textContent = ''; msg.classList.remove('ok');
+    if (!ytId(url)) { msg.textContent = 'That doesn’t look like a YouTube link. Copy it from the browser bar or the Share button.'; return; }
+    var payload = { url: url };
+    if (!$('transcriptField').hidden) {
+      if (tr.length < 300) { msg.textContent = 'Paste the whole transcript first (it should be at least a few paragraphs).'; return; }
+      payload.transcript = tr;
+    }
+    btn.disabled = true; btn.textContent = 'watching the video for you…'; msg.classList.add('ok');
+    var steps = ['finding the big ideas…', 'drawing the visuals…', 'writing the quick checks…', 'almost there…'], n = 0;
+    var tick = setInterval(function(){ if (n < steps.length) btn.textContent = steps[n++]; }, 12000);
+    try {
+      var token = await accessToken();
+      var res = await fetch('/api/video', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify(payload) });
+      var data = await res.json().catch(function(){ return {}; });
+      if (res.status === 401) { location.replace('/login?next=' + encodeURIComponent('/app/')); return; }
+      if (data.needTranscript) { $('transcriptField').hidden = false; $('ytTranscript').focus(); }
+      if (!res.ok || !data.feed) throw new Error(data.error || 'Something went wrong building your feed. Try again.');
+      myFeeds.unshift(data.feed); renderMine();
+      $('ytUrl').value = ''; $('ytTranscript').value = ''; $('transcriptField').hidden = true; msg.textContent = '';
+      openFeed(rowToFeed(data.feed));
+    } catch (e) {
+      msg.classList.remove('ok'); msg.textContent = e.message || 'Couldn’t reach loop. Check your connection.';
+    } finally {
+      clearInterval(tick); btn.disabled = false; btn.textContent = 'make my visual feed';
+    }
+  });
+  $('ytUrl').addEventListener('input', function(){ $('transcriptField').hidden = true; });
 
   /* ---------- make your own: upload or paste → /api/generate (Claude) → saved feed ---------- */
   var PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';

@@ -4,6 +4,7 @@ Your IE lectures, turned into a 5-minute swipeable feed: swipe to learn, swipe t
 
 - `/` landing page · `/signup` and `/login` (Supabase email + password) · `/app/` the feed app (logged-in only)
 - **Make a feed:** upload a lecture PDF (or paste notes) → `api/generate.js` sends it to Claude → the feed is saved to your account
+- **Turn a video into a feed:** paste a YouTube link → `api/video.js` fetches its captions (or the student pastes the transcript) → Claude writes a TL;DR card and one card per idea with a small diagram (steps, timeline, compare or a big stat), quick checks and a "watch this moment" clip
 - **Saved per student in Supabase:** feeds, scores, what's left to review, and video recall notes (Row Level Security on every table)
 
 ## Set up (about 15 minutes)
@@ -43,5 +44,7 @@ npx vercel dev
 - `app/index.html` the feed engine, demo feed, YouTube clipping, your feeds, generate screen
 - `js/supabase.js` the shared browser Supabase client
 - `api/generate.js` checks the student's login, rate-limits, calls Claude (`claude-opus-5-5`, structured JSON output), saves the feed with the student's own token so RLS applies
+- `api/video.js` YouTube captions → visual video feed (same login, limit and saving as generate)
+- `api/_shared.js` login check, daily limit, Claude call and saving, shared by both
 - `api/config.js` serves the public Supabase URL + key
 - `supabase/schema.sql` tables `feeds`, `attempts`, `notes` with RLS policies on `auth.uid()`

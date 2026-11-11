@@ -1,14 +1,25 @@
 {
   "cleanUrls": true,
   "functions": {
-    "api/generate.js": { "maxDuration": 120 }
+    "api/generate.js": {
+      "maxDuration": 120
+    },
+    "api/video.js": {
+      "maxDuration": 120
+    }
   },
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     }
   ]
