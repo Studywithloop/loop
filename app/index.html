@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>loop. app</title>
 <meta name="description" content="loop. MVP: swipe to learn, swipe to test, swipe to reinforce.">
-<meta name="theme-color" content="#0D0D0F">
+<meta name="theme-color" content="#F4F2F6">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%237A3CF0'/%3E%3Cpath d='M12 32c0-5 4-9 9-9 9 0 13 18 22 18 5 0 9-4 9-9s-4-9-9-9c-9 0-13 18-22 18-5 0-9-4-9-9z' fill='none' stroke='%23F4F2F6' stroke-width='6'/%3E%3Crect x='50' y='44' width='7' height='7' rx='1.5' fill='%23F4F2F6'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,700..800&display=swap">
 <style>
-/* Layout: a home screen with three ways in, then a full-screen vertical feed of snap cards (TikTok-style). */
+/* Layout: a home screen with three ways in, then a full-screen vertical feed of snap cards (TikTok-style). Light theme. */
 :root{
   --black:#0D0D0F; --black-2:#1C1A22; --black-3:#2E2B36; --white:#F4F2F6; --paper:#FFFFFF;
   --violet:#7A3CF0; --violet-dark:#5E25D1; --lavender:#DCD0F7; --lavender-2:#ECE6FB;
@@ -22,7 +22,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
-body{margin:0;background:var(--black);color:var(--white);font-family:var(--font);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--white);color:var(--black);font-family:var(--font);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
 h1,h2,h3,p{margin:0}
 h1,h2,h3{letter-spacing:-.04em;line-height:1;text-wrap:balance}
 a{color:inherit}
@@ -42,61 +42,60 @@ button{font:inherit;color:inherit;cursor:pointer}
 .home{min-height:100%;padding:calc(env(safe-area-inset-top,0px) + 24px) var(--gr) 40px var(--gl);max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
 .home header{display:flex;justify-content:space-between;align-items:center}
 .home header .wm{font-size:34px}
-.home header a{font-size:14px;color:var(--grey-light)}
+.home header a{font-size:14px;color:var(--grey)}
 .home h1{font-style:italic;font-weight:800;font-size:44px;line-height:.95;margin-top:8px}
-.home .lede{color:#C9C5D2}
+.home .lede{color:var(--grey)}
 .choice{display:grid;gap:8px;text-align:left;border:0;border-radius:26px;padding:22px;width:100%}
 .choice h2{font-size:26px;font-weight:800}
 .choice p{font-size:15px;line-height:1.45;opacity:.85}
 .choice .kicker{opacity:.9}
 .c1{background:var(--lavender);color:var(--black)}
-.c2{background:var(--black-2);color:var(--white);box-shadow:inset 0 0 0 1px var(--black-3)}
+.c2{background:var(--paper);color:var(--black);box-shadow:inset 0 0 0 1px var(--line)}
 .c3{background:var(--violet);color:#FFFFFF}
-.saved{font-size:14px;color:var(--grey-light)}
+.saved{font-size:14px;color:var(--grey)}
 
 /* setup screens (video, make your own) */
 .setup{min-height:100%;padding:calc(env(safe-area-inset-top,0px) + 20px) var(--gr) 40px var(--gl);max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
-.back{align-self:flex-start;background:none;border:0;color:var(--grey-light);font-weight:700;padding:6px 0}
+.back{align-self:flex-start;background:none;border:0;color:var(--grey);font-weight:700;padding:6px 0}
 .setup h1{font-style:italic;font-weight:800;font-size:38px}
-.setup p{color:#C9C5D2}
+.setup p{color:var(--grey)}
 .field{display:grid;gap:6px}
 .field label{font-size:14px;font-weight:700}
-input[type=text],input[type=url],select,textarea{width:100%;font:16px var(--font);color:var(--black);background:var(--white);border:2px solid transparent;border-radius:14px;padding:12px 14px}
+input[type=text],input[type=url],select,textarea{width:100%;font:16px var(--font);color:var(--black);background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:12px 14px}
 textarea{min-height:120px;resize:vertical}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
-.msg{font-size:14px;min-height:1.2em;color:#FFB4AB}
+.msg,.setup .msg{font-size:14px;min-height:1.2em;color:var(--bad)}
 .steps{display:grid;gap:12px;counter-reset:s}
-.steps li{list-style:none;background:var(--black-2);border-radius:18px;padding:16px;display:grid;gap:10px}
+.steps li{list-style:none;background:var(--paper);border-radius:18px;padding:16px;display:grid;gap:10px}
 .steps{padding:0;margin:0}
-.prompt{background:var(--black);border:1px solid var(--black-3);border-radius:12px;padding:12px;font-size:13px;line-height:1.5;color:#C9C5D2;max-height:140px;overflow:auto;white-space:pre-wrap}
 
 /* feed */
-.feed-wrap{position:fixed;inset:0;background:var(--black)}
-.feed-top{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 12px) var(--gr) 10px var(--gl);background:linear-gradient(180deg,rgba(13,13,15,.85),rgba(13,13,15,0))}
-.feed-top .x{background:rgba(255,255,255,.12);border:0;border-radius:999px;width:38px;height:38px;font-size:18px;font-weight:800;flex:none}
+.feed-wrap{position:fixed;inset:0;background:var(--white)}
+.feed-top{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 12px) var(--gr) 10px var(--gl);background:linear-gradient(180deg,rgba(244,242,246,.95),rgba(244,242,246,0))}
+.feed-top .x{background:rgba(13,13,15,.08);border:0;border-radius:999px;width:38px;height:38px;font-size:18px;font-weight:800;flex:none}
 .feed-top .t{flex:1;min-width:0;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.feed-top .n{font-size:13px;font-weight:700;color:var(--grey-light);font-variant-numeric:tabular-nums}
-.bar{position:absolute;left:0;right:0;top:0;height:3px;background:rgba(255,255,255,.08);z-index:6}
+.feed-top .n{font-size:13px;font-weight:700;color:var(--grey);font-variant-numeric:tabular-nums}
+.bar{position:absolute;left:0;right:0;top:0;height:3px;background:rgba(13,13,15,.08);z-index:6}
 .bar i{display:block;height:100%;width:0;background:var(--violet);transition:width .3s ease}
 .feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .card{height:100%;min-height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 64px) var(--gr) calc(env(safe-area-inset-bottom,0px) + 44px) var(--gl)}
 .panel{width:100%;max-width:480px;border-radius:30px;padding:28px 24px;display:flex;flex-direction:column;gap:16px;max-height:100%;overflow:auto}
 .p-concept{background:var(--lavender);color:var(--black)}
 .p-concept.again{background:var(--violet);color:#FFFFFF}
-.p-quiz{background:var(--black-2);color:var(--white);box-shadow:inset 0 0 0 1px var(--black-3)}
-.p-end{background:var(--paper);color:var(--black)}
+.p-quiz{background:var(--paper);color:var(--black);box-shadow:inset 0 0 0 1px var(--line)}
+.p-end{background:var(--paper);color:var(--black);box-shadow:inset 0 0 0 1px var(--line)}
 .panel h2{font-size:34px;font-weight:800}
 .panel .body{font-size:18px;line-height:1.5}
 .panel .ex{font-size:15px;line-height:1.5;background:rgba(255,255,255,.55);border-radius:16px;padding:12px 14px}
 .p-concept.again .ex{background:rgba(13,13,15,.18)}
 .src{font-size:12px;font-weight:700;opacity:.7}
 .opts{display:grid;gap:10px}
-.opt{text-align:left;border:0;border-radius:16px;padding:14px 16px;background:var(--black-3);color:var(--white);font-weight:700;font-size:16px;line-height:1.35}
+.opt{text-align:left;border:0;border-radius:16px;padding:14px 16px;background:var(--lavender-2);color:var(--black);font-weight:700;font-size:16px;line-height:1.35}
 .opt.right{background:var(--ok);color:#FFFFFF}
 .opt.wrong{background:var(--bad);color:#FFFFFF}
 .opt[disabled]{cursor:default}
-.explain{font-size:15px;line-height:1.5;color:#C9C5D2;border-left:3px solid var(--violet);padding-left:12px}
-.hint{font-size:13px;font-weight:700;color:var(--grey-light);text-align:center}
+.explain{font-size:15px;line-height:1.5;color:var(--grey);border-left:3px solid var(--violet);padding-left:12px}
+.hint{font-size:13px;font-weight:700;color:var(--grey);text-align:center}
 .p-concept .hint{color:rgba(13,13,15,.55)}
 .p-concept.again .hint{color:rgba(255,255,255,.7)}
 .clip{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000;max-width:100%}
@@ -107,35 +106,35 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
 .rate button[aria-pressed=true]{background:var(--violet);border-color:var(--violet);color:#FFFFFF}
 .p-end textarea,.p-end input{background:var(--white);border-color:var(--line)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
-.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--paper);color:var(--black);font-weight:700;font-size:14px;padding:10px 16px;border-radius:999px;z-index:20}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--black);color:var(--white);font-weight:700;font-size:14px;padding:10px 16px;border-radius:999px;z-index:20}
 @media (prefers-reduced-motion: reduce){.btn,.bar i{transition:none}}
 
 /* account + saved feeds */
 .who{display:flex;align-items:center;gap:10px;min-width:0}
-.who span{font-size:13px;color:var(--grey-light);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw}
-.who button{background:none;border:0;color:var(--lavender);font-weight:700;font-size:14px;padding:6px 0;text-decoration:underline}
+.who span{font-size:13px;color:var(--grey);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw}
+.who button{background:none;border:0;color:var(--violet);font-weight:700;font-size:14px;padding:6px 0;text-decoration:underline}
 .mine{display:grid;gap:10px}
 .mine h2{font-size:22px;font-weight:800;font-style:italic}
 .mine ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.mine li{display:flex;align-items:center;gap:10px;background:var(--black-2);border-radius:18px;padding:12px 14px}
+.mine li{display:flex;align-items:center;gap:10px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);border-radius:18px;padding:12px 14px}
 .mine li .open{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0}
 .mine li b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mine li small{font-size:13px;color:var(--grey-light)}
+.mine li small{font-size:13px;color:var(--grey)}
 .mine li .rv{flex:none;border:0;border-radius:999px;background:var(--violet);color:#fff;font-weight:800;font-size:13px;padding:8px 12px}
-.mine li .del{flex:none;border:0;background:none;color:var(--grey-light);font-size:18px;padding:4px 6px}
-.mine .empty{font-size:14px;color:var(--grey-light)}
-.drop{display:grid;gap:6px;place-items:center;text-align:center;border:2px dashed var(--black-3);border-radius:18px;padding:22px 16px;cursor:pointer}
+.mine li .del{flex:none;border:0;background:none;color:var(--grey);font-size:18px;padding:4px 6px}
+.mine .empty{font-size:14px;color:var(--grey)}
+.drop{display:grid;gap:6px;place-items:center;text-align:center;border:2px dashed #CFC8DB;background:var(--paper);border-radius:18px;padding:22px 16px;cursor:pointer}
 .drop:hover,.drop:focus-within{border-color:var(--violet)}
 .drop b{font-size:17px}
-.drop small{font-size:13px;color:var(--grey-light)}
+.drop small{font-size:13px;color:var(--grey)}
 .drop input{position:absolute;width:1px;height:1px;opacity:0}
-.or{font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--grey-light);text-align:center}
+.or{font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);text-align:center}
 .btn[disabled]{opacity:.6;cursor:default}
-.msg.ok{color:#9FE3BF}
+.msg.ok,.setup .msg.ok{color:var(--ok)}
 
 /* video feeds: intro card, emoji, visuals, jump-to-moment */
-details.more{background:var(--black-2);border-radius:18px;padding:14px 16px}
-details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--grey-light)}
+details.more{background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);border-radius:18px;padding:14px 16px}
+details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--grey)}
 .p-intro{background:var(--violet);color:#FFFFFF}
 .p-intro .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:18px;display:block;background:rgba(0,0,0,.2)}
 .p-intro .hook{font-size:26px;font-weight:800;font-style:italic;letter-spacing:-.03em;line-height:1.1}
@@ -174,7 +173,7 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
 <main id="home" class="home">
   <header><a class="wm" href="../" style="font-size:34px">loop<i></i></a><div class="who"><span id="whoEmail"></span><button type="button" id="logout" data-testid="logout">log out</button></div></header>
   <div>
-    <p class="kicker" style="color:var(--lavender)">MVP · beta</p>
+    <p class="kicker" style="color:var(--violet)">for IE University students</p>
     <h1>swipe to learn.<br>swipe to test.<br>swipe to reinforce<span class="dot">.</span></h1>
   </div>
   <p class="lede">5-minute revision from your actual IE courses. Pick one:</p>
@@ -184,7 +183,7 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
     <p>Lean Canvas, AARRR, LTV vs CAC, pricing and runway. Today’s session as a feed, with a quick check every two cards.</p>
   </button>
   <button class="choice c2" id="goVideo">
-    <span class="kicker" style="color:var(--lavender)">for assigned videos</span>
+    <span class="kicker" style="color:var(--violet)">for assigned videos</span>
     <h2>Turn a video into a feed</h2>
     <p>Paste a YouTube link. loop. turns it into a visual summary with diagrams, quick checks and jump-to-the-moment clips.</p>
   </button>
@@ -240,7 +239,7 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
   </div>
   <button class="btn btn-violet" id="buildOwn" style="align-self:flex-start">build my feed</button>
   <p class="msg" id="makeMsg" role="status" aria-live="polite"></p>
-  <p style="font-size:13px;color:var(--grey-light)">Your material is sent to Claude (Anthropic’s AI) only to build this feed. The feed is saved to your account; your file isn’t stored.</p>
+  <p style="font-size:13px;color:var(--grey)">Your material is sent to Claude (Anthropic’s AI) only to build this feed. The feed is saved to your account; your file isn’t stored.</p>
 </section>
 
 <!-- FEED -->
@@ -365,7 +364,7 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
   function renderCard(c, i, again){
     if (c.type === 'quiz') {
       return '<section class="card" data-i="' + i + '"><div class="panel p-quiz">' +
-        '<span class="kicker" style="color:var(--lavender)">quick check</span>' +
+        '<span class="kicker" style="color:var(--violet)">quick check</span>' +
         '<h2 style="font-size:26px">' + esc(c.question) + '</h2>' +
         '<div class="opts">' + c.options.map(function(o, k){ return '<button class="opt" data-q="' + i + '" data-k="' + k + '">' + esc(o) + '</button>'; }).join('') + '</div>' +
         '<p class="explain" hidden>' + esc(c.explain || '') + '</p>' +
@@ -373,7 +372,7 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
     }
     if (c.type === 'clip') {
       return '<section class="card" data-i="' + i + '"><div class="panel p-quiz">' +
-        '<span class="kicker" style="color:var(--lavender)">clip ' + c.n + ' of ' + c.total + ' · ' + mmss(c.start) + '–' + mmss(c.end) + '</span>' +
+        '<span class="kicker" style="color:var(--violet)">clip ' + c.n + ' of ' + c.total + ' · ' + mmss(c.start) + '–' + mmss(c.end) + '</span>' +
         '<div class="clip" data-yt="' + esc(c.vid) + '" data-start="' + c.start + '" data-end="' + c.end + '"></div>' +
         '<p class="hint">watch, then swipe up ↑</p></div></section>';
     }
