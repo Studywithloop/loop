@@ -9,6 +9,9 @@
     },
     "api/explain.js": {
       "maxDuration": 60
+    },
+    "api/voice.js": {
+      "maxDuration": 60
     }
   },
   "headers": [

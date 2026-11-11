@@ -724,7 +724,38 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
   }
   if (canSpeak) speechSynthesis.onvoiceschanged = function(){};
   // iPhones only allow speech that starts from a tap, so "unlock" it when a feed is opened.
-  function unlockSpeech(){ if (!canSpeak || !voiceOn()) return; try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {} }
+  function unlockSpeech(){
+    if (!voiceOn()) return;
+    try { voiceEl.src = SILENT; var p = voiceEl.play(); if (p) p.catch(function(){}); } catch (e) {}
+    if (!canSpeak) return;
+    try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {}
+  }
+
+  // Natural AI voice (Gemini, via /api/voice): one smooth take per explainer. If it isn't available,
+  // the phone's own voice reads the scenes instead.
+  var voiceEl = new Audio(); voiceEl.preload = 'auto';
+  var SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+  var aiVoices = {}, aiVoiceDown = false;
+  function getAiVoice(c){
+    if (aiVoiceDown || !c || !c.scenes) return null;
+    var lines = c.scenes.map(function(s){ return s.narration; }), k = lines.join('|');
+    if (!aiVoices[k]) aiVoices[k] = (async function(){
+      try {
+        var res = await fetch('/api/voice', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (await accessToken()) }, body: JSON.stringify({ lines: lines, lang: c.lang || '' }) });
+        if (!res.ok) {
+          if (res.status === 429 || res.status === 503) aiVoiceDown = true;
+          console.warn('AI voice unavailable', res.status, await res.json().catch(function(){ return {}; }));
+          return null;
+        }
+        return URL.createObjectURL(await res.blob());
+      } catch (e) { return null; }
+    })();
+    return aiVoices[k];
+  }
+  function prefetchVoice(i){
+    if (!voiceOn() || aiVoiceDown) return;
+    for (var j = i + 1; j < state.items.length && j <= i + 3; j++) if (state.items[j].c.scenes) { getAiVoice(state.items[j].c); return; }
+  }
 
   function estMs(text){ return Math.max(2600, Math.round(String(text).split(/\s+/).length / 2.6 * 1000) + 900); }
 
@@ -776,19 +807,56 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
     var a = state && state.anim; if (!a) return;
     clearTimeout(a.timer); a.stopped = true;
     if (canSpeak) speechSynthesis.cancel();
+    voiceEl.onloadedmetadata = voiceEl.ontimeupdate = voiceEl.onended = voiceEl.onerror = null;
+    try { voiceEl.pause(); } catch (e) {}
     state.anim = null;
   }
   function playAnim(i, from){
     stopAnim();
     var it = state.items[i], card = $('feed').querySelectorAll('.card')[i];
     if (!it || !it.c.scenes || !card) return;
-    var a = state.anim = { i: i, k: from || 0, card: card, scenes: it.c.scenes, lang: it.c.lang || 'en', timer: null, stopped: false };
+    var a = state.anim = { i: i, k: from || 0, card: card, scenes: it.c.scenes, lang: it.c.lang || 'en', timer: null, stopped: false, drawn: -1 };
     card.classList.remove('done', 'paused');
-    showScene(a);
+    var voice = voiceOn() ? getAiVoice(it.c) : null;
+    prefetchVoice(i);
+    if (!voice) return showScene(a);
+    // Show the first scene straight away; start moving once the AI voice is ready (or give up after 6 s).
+    drawScene(a, estMs(a.scenes[a.k].narration));
+    var settled = false;
+    var giveUp = setTimeout(function(){ if (settled || a.stopped) return; settled = true; showScene(a); }, 6000);
+    voice.then(function(url){
+      if (settled || a.stopped) return;
+      settled = true; clearTimeout(giveUp);
+      if (url) startAiVoice(a, url); else showScene(a);
+    });
   }
-  function showScene(a){
-    if (a.stopped) return;
-    var s = a.scenes[a.k], stage = a.card.querySelector('.stage'), dur = estMs(s.narration);
+  // Plays the one-take voice-over and moves the scenes along with it (each scene gets time in proportion to its words).
+  function startAiVoice(a, url){
+    var deviceInstead = function(){ if (a.stopped || state.anim !== a) return; voiceEl.onloadedmetadata = voiceEl.ontimeupdate = voiceEl.onended = voiceEl.onerror = null; showScene(a); };
+    voiceEl.onloadedmetadata = function(){
+      if (a.stopped) return;
+      var total = voiceEl.duration;
+      if (!isFinite(total) || !total) return deviceInstead();
+      var w = a.scenes.map(function(s){ return s.narration.split(/\s+/).length + 2; }), sum = w.reduce(function(x, y){ return x + y; }, 0), acc = 0;
+      a.bounds = w.map(function(x){ var b = acc / sum * total; acc += x; return b; });
+      a.total = total;
+      voiceEl.currentTime = a.bounds[a.k] || 0;
+      if (a.drawn !== a.k) drawScene(a, sceneMs(a, a.k)); else a.card.querySelectorAll('.segs i')[a.k].firstChild.style.animationDuration = sceneMs(a, a.k) + 'ms';
+      var p = voiceEl.play(); if (p) p.catch(deviceInstead); // autoplay blocked → phone voice
+    };
+    voiceEl.ontimeupdate = function(){
+      if (a.stopped || state.anim !== a || !a.bounds) return;
+      var t = voiceEl.currentTime, k = a.k;
+      while (k < a.scenes.length - 1 && t >= a.bounds[k + 1]) k++;
+      if (k !== a.k) { a.k = k; drawScene(a, sceneMs(a, k)); }
+    };
+    voiceEl.onended = function(){ if (!a.stopped && state.anim === a) finishAnim(a); };
+    voiceEl.onerror = deviceInstead;
+    voiceEl.src = url;
+  }
+  function sceneMs(a, k){ return Math.max(1200, Math.round(((k + 1 < a.bounds.length ? a.bounds[k + 1] : a.total) - a.bounds[k]) * 1000)); }
+  function drawScene(a, dur){
+    var s = a.scenes[a.k], stage = a.card.querySelector('.stage');
     stage.innerHTML = sceneHtml(s, dur);
     a.card.querySelector('.capt').textContent = s.narration;
     a.card.querySelectorAll('.segs i').forEach(function(seg, k){
@@ -796,6 +864,12 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
       seg.firstChild.style.animationDuration = dur + 'ms';
     });
     afterMount(stage, dur);
+    a.drawn = a.k;
+  }
+  function showScene(a){
+    if (a.stopped) return;
+    var s = a.scenes[a.k], dur = estMs(s.narration);
+    if (a.drawn !== a.k) drawScene(a, dur);
     var next = function(){ if (a.stopped || state.anim !== a) return; clearTimeout(a.timer); if (a.k < a.scenes.length - 1) { a.k++; showScene(a); } else finishAnim(a); };
     if (canSpeak && voiceOn()) {
       var u = new SpeechSynthesisUtterance(s.narration), v = pickVoice(a.lang);
