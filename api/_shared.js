@@ -24,9 +24,9 @@ function supabaseFor(token) {
   });
 }
 
-// Checks method, login and the daily feed limit. Returns the student's Supabase client,
+// Checks the method and the login. Returns { supabase, user } acting as the student,
 // or null after it has already sent the error response.
-export async function startFeedRequest(req, res) {
+export async function requireUser(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     res.status(405).json({ error: 'Use POST.' });
@@ -38,6 +38,15 @@ export async function startFeedRequest(req, res) {
   const supabase = supabaseFor(token);
   const { data: userData, error: userError } = await supabase.auth.getUser(token);
   if (userError || !userData?.user) { res.status(401).json({ error: 'Your session expired. Please log in again.' }); return null; }
+  return { supabase, user: userData.user };
+}
+
+// Checks method, login and the daily feed limit. Returns the student's Supabase client,
+// or null after it has already sent the error response.
+export async function startFeedRequest(req, res) {
+  const auth = await requireUser(req, res);
+  if (!auth) return null;
+  const { supabase } = auth;
 
   // Simple cost guard: at most DAILY_LIMIT generated feeds per student per 24 hours.
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -48,16 +57,16 @@ export async function startFeedRequest(req, res) {
 }
 
 // Asks Claude for JSON matching `schema`. Returns the parsed object, or null after sending the error response.
-export async function askClaude(res, { system, schema, content, unreadable }) {
+export async function askClaude(res, { system, schema, content, unreadable, effort = 'medium', maxTokens = 16000 }) {
   let message;
   try {
     message = await anthropic.beta.messages
       .stream({
         model: MODEL,
-        max_tokens: 16000,
+        max_tokens: maxTokens,
         betas: ['server-side-fallback-2026-07-01'],
         fallbacks: 'default', // if the model declines, the API retries on a fallback model in the same call
-        output_config: { effort: 'medium', format: { type: 'json_schema', schema } },
+        output_config: { effort, format: { type: 'json_schema', schema } },
         system,
         messages: [{ role: 'user', content }],
       })

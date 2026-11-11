@@ -5,13 +5,15 @@ Your IE lectures, turned into a 5-minute swipeable feed: swipe to learn, swipe t
 - `/` landing page · `/signup` and `/login` (Supabase email + password) · `/app/` the feed app (logged-in only)
 - **Make a feed:** upload a lecture PDF (or paste notes) → `api/generate.js` sends it to Claude → the feed is saved to your account
 - **Turn a video into a feed:** paste a YouTube link → `api/video.js` fetches its captions (or the student pastes the transcript) → Claude writes a TL;DR card and one card per idea with a small diagram (steps, timeline, compare or a big stat), quick checks and a "watch this moment" clip
-- **Saved per student in Supabase:** feeds, scores, what's left to review, and video recall notes (Row Level Security on every table)
+- **Reels:** every feed plays as full-screen reels with side buttons (❤️ save, 🔁 explain it differently, 🔊 video sound, ↗ share), double-tap to save, and the matching video moment playing behind video cards
+- **For You:** one endless feed mixing every feed you've made; cards you missed or saved come back about every third swipe
+- **Saved per student in Supabase:** feeds, scores, what's left to review, saved cards, and video recall notes (Row Level Security on every table)
 
 ## Set up (about 15 minutes)
 
 ### 1. Supabase
 1. Create a free project at [supabase.com](https://supabase.com).
-2. **SQL Editor → New query**, paste [`supabase/schema.sql`](supabase/schema.sql), run it.
+2. **SQL Editor → New query**, paste [`supabase/schema.sql`](supabase/schema.sql), run it. (Already set up before the reels update? Run [`supabase/002_card_state.sql`](supabase/002_card_state.sql) once instead.)
 3. **Authentication → Sign In / Providers → Email:** turn **off** "Confirm email" if you want students to get straight into the app after signing up. (If you leave it on, the sign-up page tells them to check their inbox.)
 4. **Authentication → URL Configuration:** set the Site URL to your Vercel URL.
 5. **Project Settings → API:** copy the Project URL and the **publishable (anon)** key. Never use the `service_role` key here.
@@ -45,6 +47,7 @@ npx vercel dev
 - `js/supabase.js` the shared browser Supabase client
 - `api/generate.js` checks the student's login, rate-limits, calls Claude (`claude-opus-5-5`, structured JSON output), saves the feed with the student's own token so RLS applies
 - `api/video.js` YouTube captions → visual video feed (same login, limit and saving as generate)
+- `api/explain.js` the 🔁 button: Claude re-explains one card (cached per student in `card_state`, 30 a day)
 - `api/_shared.js` login check, daily limit, Claude call and saving, shared by both
 - `api/config.js` serves the public Supabase URL + key
-- `supabase/schema.sql` tables `feeds`, `attempts`, `notes` with RLS policies on `auth.uid()`
+- `supabase/schema.sql` tables `feeds`, `attempts`, `notes`, `card_state` with RLS policies on `auth.uid()`

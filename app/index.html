@@ -52,6 +52,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .c1{background:var(--lavender);color:var(--black)}
 .c2{background:var(--paper);color:var(--black);box-shadow:inset 0 0 0 1px var(--line)}
 .c3{background:var(--violet);color:#FFFFFF}
+.c0{background:var(--black);color:var(--white);box-shadow:0 10px 30px rgba(122,60,240,.25)}
+.c0 .kicker{color:var(--lavender)}
+.c0 h2{font-size:32px;font-style:italic}
 .saved{font-size:14px;color:var(--grey)}
 
 /* setup screens (video, make your own) */
@@ -135,9 +138,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}
 /* video feeds: intro card, emoji, visuals, jump-to-moment */
 details.more{background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);border-radius:18px;padding:14px 16px}
 details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--grey)}
-.p-intro{background:var(--violet);color:#FFFFFF}
-.p-intro .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:18px;display:block;background:rgba(0,0,0,.2)}
-.p-intro .hook{font-size:26px;font-weight:800;font-style:italic;letter-spacing:-.03em;line-height:1.1}
 .tldr{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .tldr li{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.14);border-radius:16px;padding:12px 14px;font-weight:700;font-size:16px;line-height:1.35}
 .tldr li span{font-size:22px;line-height:1}
@@ -162,8 +162,65 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
 .vz.stat span{font-size:15px;opacity:.9}
 .again .vz.steps li,.again .vz.cmp>div{background:rgba(255,255,255,.18)}
 .again .vz.stat b{color:#FFFFFF}
-.watch{align-self:flex-start;border:0;border-radius:999px;background:var(--black);color:var(--white);font-weight:800;font-size:14px;padding:10px 16px}
-.moment .clip{margin-top:4px}
+
+/* ---------- reels: every card fills the screen, text sits at the bottom like a caption ---------- */
+.feed{max-width:520px;margin:0 auto}
+.feed-wrap{background:#E9E5F0}
+.feed-top{background:none;max-width:520px;margin:0 auto}
+.feed-top .x,.feed-top .t,.feed-top .n{background:rgba(255,255,255,.88);color:var(--black);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 2px 10px rgba(13,13,15,.08)}
+.feed-top .t{flex:0 1 auto;max-width:60%;border-radius:999px;padding:8px 14px;font-size:13px}
+.feed-top .n{border-radius:999px;padding:8px 12px;margin-left:auto}
+.feed-wrap.fy .bar{display:none}
+.card.reel{position:relative;display:block;padding:0;overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.reel .body{position:absolute;left:0;right:76px;top:0;bottom:0;padding:calc(env(safe-area-inset-top,0px) + 70px) 0 calc(env(safe-area-inset-bottom,0px) + 26px) var(--gl);display:flex;flex-direction:column;justify-content:flex-end;gap:12px;overflow-y:auto;z-index:1}
+.reel:not(.k-video) .body{justify-content:center}
+.reel h2{font-size:34px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.reel .txt{font-size:18px;line-height:1.45}
+.reel .ex{font-size:15px;line-height:1.5;background:rgba(255,255,255,.6);border-radius:16px;padding:12px 14px}
+.reel .by{font-size:13px;font-weight:800;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reel .hint{text-align:left}
+.k-concept{background:var(--lavender);color:var(--black)}
+.k-concept.again{background:var(--violet);color:#FFFFFF}
+.k-concept.again .ex{background:rgba(13,13,15,.18)}
+.k-quiz{background:var(--paper);color:var(--black)}
+.k-quiz h2{font-size:30px}
+.k-video{background:var(--black);color:#FFFFFF}
+.k-video .ex,.k-video .vz.steps li,.k-video .vz.cmp>div,.k-video .vz.stat{background:rgba(255,255,255,.14);color:#FFFFFF}
+.k-video .vz.stat b{color:#FFFFFF}
+.k-video .vz.tl li::before{box-shadow:0 0 0 3px rgba(13,13,15,.6)}
+.k-intro h2{font-style:italic;font-size:32px}
+.k-intro .tldr li{background:rgba(255,255,255,.16)}
+.yt{position:absolute;inset:0;overflow:hidden;background:#000 center/cover no-repeat}
+.yt iframe{position:absolute;top:50%;left:50%;width:max(100%,177.78vh);height:max(100%,56.25vw);transform:translate(-50%,-50%);border:0;pointer-events:none}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,15,.45) 0%,rgba(13,13,15,.05) 22%,rgba(13,13,15,.25) 45%,rgba(13,13,15,.9) 100%)}
+.rail{position:absolute;right:max(10px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 30px);display:flex;flex-direction:column;align-items:center;gap:16px;z-index:2}
+.rail button{display:grid;justify-items:center;gap:4px;background:none;border:0;padding:0;color:inherit;font-size:11px;font-weight:800;letter-spacing:.02em}
+.rail .ic{width:50px;height:50px;border-radius:999px;display:grid;place-items:center;font-size:22px;background:rgba(255,255,255,.9);color:var(--black);box-shadow:0 4px 14px rgba(13,13,15,.15);transition:transform .15s ease}
+.rail button:active .ic{transform:scale(.9)}
+.rail button.on .ic{background:#FFE3EC}
+.sheet{position:absolute;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:3;background:var(--paper);color:var(--black);border-radius:24px;padding:20px;box-shadow:0 14px 40px rgba(13,13,15,.3);display:grid;gap:10px;max-height:70%;overflow:auto}
+.sheet .aha{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.sheet .btn{justify-self:start}
+.burst{position:absolute;left:50%;top:42%;z-index:4;font-size:110px;pointer-events:none;animation:burst .8s ease forwards}
+@keyframes burst{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}60%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-80%) scale(.9);opacity:0}}
+
+/* light animation: each card builds in when it arrives */
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.3) rotate(-12deg)}70%{opacity:1;transform:scale(1.15) rotate(4deg)}100%{opacity:1;transform:none}}
+.reel .ani,.reel .emo{opacity:0}
+.reel.on .ani{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * 90ms)}
+.reel.on .emo{display:inline-block;animation:pop .55s cubic-bezier(.2,.7,.2,1) .05s both}
+.reel.on .vz li,.reel.on .vz.cmp>div{animation:rise .45s cubic-bezier(.2,.7,.2,1) both}
+.reel.on .vz li:nth-child(1),.reel.on .vz.cmp>div:nth-child(1){animation-delay:.35s}
+.reel.on .vz li:nth-child(2),.reel.on .vz.cmp>div:nth-child(2){animation-delay:.5s}
+.reel.on .vz li:nth-child(3),.reel.on .vz.cmp>div:nth-child(3){animation-delay:.65s}
+.reel.on .vz li:nth-child(4){animation-delay:.8s}
+.reel.on .vz li:nth-child(5){animation-delay:.95s}
+.reel.on .vz.stat b{animation:pop .6s cubic-bezier(.2,.7,.2,1) .35s both;display:inline-block}
+@media (prefers-reduced-motion: reduce){
+  .reel .ani,.reel .emo,.reel.on .ani,.reel.on .emo,.reel.on .vz li,.reel.on .vz.cmp>div,.reel.on .vz.stat b{opacity:1;animation:none;transform:none}
+  .burst{animation:none;opacity:0}
+}
 </style>
 <script src="/api/config"></script>
 </head>
@@ -176,7 +233,13 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
     <p class="kicker" style="color:var(--violet)">for IE University students</p>
     <h1>swipe to learn.<br>swipe to test.<br>swipe to reinforce<span class="dot">.</span></h1>
   </div>
-  <p class="lede">5-minute revision from your actual IE courses. Pick one:</p>
+  <p class="lede">5-minute revision from your actual IE courses.</p>
+  <button class="choice c0" id="goForYou">
+    <span class="kicker">for you · ∞</span>
+    <h2>Start swiping</h2>
+    <p>One endless feed that mixes everything you’ve added. <span id="fyMeta">Cards you miss or ❤️ save come back here</span></p>
+  </button>
+  <p class="lede" style="margin-top:6px">Or pick one:</p>
   <button class="choice c1" id="goDemo">
     <span class="kicker">try it now · 4 min</span>
     <h2>Edtech Challenge: business models</h2>
@@ -185,7 +248,7 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
   <button class="choice c2" id="goVideo">
     <span class="kicker" style="color:var(--violet)">for assigned videos</span>
     <h2>Turn a video into a feed</h2>
-    <p>Paste a YouTube link. loop. turns it into a visual summary with diagrams, quick checks and jump-to-the-moment clips.</p>
+    <p>Paste a YouTube link. loop. turns it into reels: one idea per card with a diagram, and the matching moment of the video playing behind it.</p>
   </button>
   <button class="choice c3" id="goMake">
     <span class="kicker">your own slides</span>
@@ -203,7 +266,7 @@ details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--g
 <section id="videoSetup" class="setup" hidden>
   <button class="back" data-home>← back</button>
   <h1>turn a video into a feed<span class="dot">.</span></h1>
-  <p>Paste the YouTube link your professor assigned. loop. reads the video and builds a fun visual summary: the TL;DR, one idea per card with a diagram, quick checks, and a button to jump to that exact moment in the video.</p>
+  <p>Paste the YouTube link your professor assigned. loop. reads the video and turns it into reels: the TL;DR, one idea per card with a diagram and that moment of the video playing behind it, plus quick checks.</p>
   <div class="field"><label for="ytUrl">YouTube link</label><input id="ytUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off"></div>
   <div class="field" id="transcriptField" hidden>
     <label for="ytTranscript">Paste the video’s transcript</label>
@@ -304,24 +367,32 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
 
   document.querySelectorAll('[data-home]').forEach(function(b){ b.addEventListener('click', function(){ show('home'); }); });
   $('goDemo').addEventListener('click', function(){ openFeed(DEMO); });
+  $('goForYou').addEventListener('click', function(){ openForYou(); });
   $('goVideo').addEventListener('click', function(){ show('videoSetup'); });
   $('goMake').addEventListener('click', function(){ show('makeSetup'); });
 
   /* ---------- your feeds (Supabase) ---------- */
-  var myFeeds = [], lastRun = {};
+  var myFeeds = [], lastRun = {}, cardState = {}; // cardState['feedKey|cardId'] = { saved, missed, explanation }
   function rowToFeed(r){ return { id: r.id, title: r.title, source: r.source || r.title, cards: r.cards }; }
   function feedByKey(key){ if (key === DEMO.id) return DEMO; var r = myFeeds.find(function(f){ return f.id === key; }); return r ? rowToFeed(r) : null; }
   async function loadMine(){
     var res = await Promise.all([
       supabase.from('feeds').select('id, title, source, cards, created_at').order('created_at', { ascending: false }).limit(50),
-      supabase.from('attempts').select('feed_key, correct, total, missed, created_at').order('created_at', { ascending: false }).limit(300)
+      supabase.from('attempts').select('feed_key, correct, total, missed, created_at').order('created_at', { ascending: false }).limit(300),
+      supabase.from('card_state').select('feed_key, card_id, saved, missed, explanation').limit(2000)
     ]);
     if (res[0].error || res[1].error) { $('mineEmpty').hidden = false; $('mineEmpty').textContent = 'Couldn’t load your feeds. Refresh to try again.'; return; }
     myFeeds = res[0].data; lastRun = {};
     res[1].data.forEach(function(a){ if (!lastRun[a.feed_key]) lastRun[a.feed_key] = a; });
+    cardState = {};
+    if (res[2].error) console.warn('card_state not available yet (run supabase/002_card_state.sql)', res[2].error.message);
+    else res[2].data.forEach(function(r){ cardState[r.feed_key + '|' + r.card_id] = { saved: r.saved, missed: r.missed, explanation: r.explanation }; });
     renderMine();
   }
   function renderMine(){
+    var due = 0;
+    myFeeds.map(rowToFeed).concat([DEMO]).forEach(function(f){ (f.cards || []).forEach(function(c){ if (c.type === 'concept' && isDue(f, c)) due++; }); });
+    $('fyMeta').textContent = due ? due + ' card' + (due === 1 ? '' : 's') + ' you missed or saved will come back' : 'Cards you miss or ❤️ save come back here';
     var items = myFeeds.map(function(f){ return { key: f.id, title: f.title, own: true }; });
     if (lastRun[DEMO.id]) items.push({ key: DEMO.id, title: DEMO.title, own: false });
     $('mineEmpty').hidden = items.length > 0;
@@ -344,31 +415,48 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
       var del = await supabase.from('feeds').delete().eq('id', key);
       if (del.error) { toast('Couldn’t delete it. Try again.'); return; }
       await supabase.from('attempts').delete().eq('feed_key', key);
+      await supabase.from('card_state').delete().eq('feed_key', key);
       myFeeds = myFeeds.filter(function(f){ return f.id !== key; }); delete lastRun[key]; renderMine(); toast('Feed deleted');
     }
   });
   loadMine();
 
-  /* ---------- feed engine ---------- */
+  /* ---------- feed engine: full-screen reels ---------- */
+  // state.items holds what is on screen, in order: { c: card, f: the feed it came from, again: shown as review }.
   var state = null;
   function openFeed(feed, opts){
     opts = opts || {};
-    state = { feed: feed, results: {}, missed: [], fuzzy: [], isReview: !!opts.review };
-    $('feedTitle').textContent = (opts.review ? 'review · ' : '') + feed.title;
-    var html = feed.cards.map(function(c, i){ return renderCard(c, i, opts.review); }).join('') + endCard();
-    var el = $('feed'); el.innerHTML = html; el.scrollTop = 0;
+    start(feed.cards.map(function(c){ return { c: c, f: feed, again: !!opts.review }; }), { feed: feed, title: (opts.review ? 'review · ' : '') + feed.title, review: !!opts.review });
+  }
+  function start(items, o){
+    stopBg();
+    state = { feed: o.feed, items: items, results: {}, missed: [], fuzzy: [], isReview: !!o.review, forYou: !!o.forYou, active: -1, player: null, playerIdx: -1 };
+    $('feedTitle').textContent = o.title;
+    $('feedWrap').classList.toggle('fy', state.forYou);
+    var el = $('feed');
+    el.innerHTML = items.map(renderItem).join('') + (state.forYou ? '' : endCard());
     show('feedWrap');
-    wire(el);
+    el.scrollTop = 0; // after show(): a hidden element can't be scrolled
     progress();
   }
-  function renderCard(c, i, again){
+
+  function cardKey(f, c){ return f.id + '|' + c.id; }
+  function rail(btns){ return '<div class="rail">' + btns.join('') + '</div>'; }
+  function railBtn(act, i, icon, label, on){ return '<button type="button" data-act="' + act + '" data-i="' + i + '"' + (on ? ' class="on" aria-pressed="true"' : (act === 'save' ? ' aria-pressed="false"' : '')) + '><span class="ic" aria-hidden="true">' + icon + '</span>' + label + '</button>'; }
+  function byline(it){ return '<p class="by ani" style="--d:6">' + (state && state.forYou || it.f !== (state && state.feed) ? '@' + esc(it.f.title) : esc(it.c.source || it.f.source || it.f.title)) + '</p>'; }
+  // Background for video cards: thumbnail first, then the moment itself plays muted behind the text.
+  function bgVideo(c){ return '<div class="yt" style="background-image:url(https://i.ytimg.com/vi/' + encodeURIComponent(c.vid) + '/hqdefault.jpg)"></div><div class="shade"></div>'; }
+
+  function renderItem(it, i){
+    var c = it.c;
     if (c.type === 'quiz') {
-      return '<section class="card" data-i="' + i + '"><div class="panel p-quiz">' +
-        '<span class="kicker" style="color:var(--violet)">quick check</span>' +
-        '<h2 style="font-size:26px">' + esc(c.question) + '</h2>' +
-        '<div class="opts">' + c.options.map(function(o, k){ return '<button class="opt" data-q="' + i + '" data-k="' + k + '">' + esc(o) + '</button>'; }).join('') + '</div>' +
+      return '<section class="card reel k-quiz" data-i="' + i + '"><div class="body">' +
+        '<span class="kicker ani" style="color:var(--violet);--d:0">quick check</span>' +
+        '<h2 class="ani" style="--d:1">' + esc(c.question) + '</h2>' +
+        '<div class="opts">' + c.options.map(function(o, k){ return '<button class="opt ani" style="--d:' + (k + 2) + '" data-q="' + i + '" data-k="' + k + '">' + esc(o) + '</button>'; }).join('') + '</div>' +
         '<p class="explain" hidden>' + esc(c.explain || '') + '</p>' +
-        '<p class="hint">answer to keep going ↑</p></div></section>';
+        '<p class="hint">answer to keep going ↑</p>' + byline(it) + '</div>' +
+        rail([railBtn('share', i, '↗', 'share')]) + '</section>';
     }
     if (c.type === 'clip') {
       return '<section class="card" data-i="' + i + '"><div class="panel p-quiz">' +
@@ -385,22 +473,24 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
         '<p class="hint">writing it down beats re-watching</p></div></section>';
     }
     if (c.type === 'intro') {
-      return '<section class="card" data-i="' + i + '"><div class="panel p-intro">' +
-        '<span class="kicker">the TL;DR</span>' +
-        '<img class="thumb" alt="" src="https://i.ytimg.com/vi/' + encodeURIComponent(c.vid) + '/hqdefault.jpg">' +
-        (c.hook ? '<p class="hook">' + esc(c.hook) + '</p>' : '') +
-        '<ul class="tldr">' + (c.takeaways || []).map(function(t){ return '<li><span aria-hidden="true">' + esc(t.emoji) + '</span>' + esc(t.text) + '</li>'; }).join('') + '</ul>' +
-        '<p class="hint" style="color:rgba(255,255,255,.75)">swipe up for the details ↑</p></div></section>';
+      return '<section class="card reel k-video k-intro" data-i="' + i + '">' + bgVideo(c) + '<div class="body">' +
+        '<span class="kicker ani" style="--d:0">the TL;DR</span>' +
+        (c.hook ? '<h2 class="ani" style="--d:1">' + esc(c.hook) + '</h2>' : '') +
+        '<ul class="tldr">' + (c.takeaways || []).map(function(t, k){ return '<li class="ani" style="--d:' + (k + 2) + '"><span aria-hidden="true">' + esc(t.emoji) + '</span>' + esc(t.text) + '</li>'; }).join('') + '</ul>' +
+        '<p class="hint">swipe up for the details ↑</p>' + byline(it) + '</div>' +
+        rail([railBtn('sound', i, '🔊', 'sound'), railBtn('share', i, '↗', 'share')]) + '</section>';
     }
-    return '<section class="card" data-i="' + i + '"><div class="panel p-concept' + (again ? ' again' : '') + '">' +
-      '<span class="kicker">' + (again ? 'back for review' : 'swipe to learn') + '</span>' +
+    // concept
+    var st = cardState[cardKey(it.f, c)] || {};
+    return '<section class="card reel k-concept' + (c.vid ? ' k-video' : '') + (it.again ? ' again' : '') + '" data-i="' + i + '">' + (c.vid ? bgVideo(c) : '') + '<div class="body">' +
+      '<span class="kicker ani" style="--d:0">' + (it.again ? (st.saved ? '❤️ saved · back for review' : 'back for review') : 'swipe to learn') + '</span>' +
       (c.emoji ? '<span class="emo" aria-hidden="true">' + esc(c.emoji) + '</span>' : '') +
-      '<h2>' + esc(c.title) + '</h2><p class="body">' + esc(c.body) + '</p>' +
-      visualHtml(c.visual) +
-      (c.example ? '<p class="ex"><b>Example:</b> ' + esc(c.example) + '</p>' : '') +
-      (c.vid ? '<button class="watch" data-watch="' + i + '">▶ watch this moment · ' + mmss(c.start || 0) + '</button><div class="moment" hidden></div>' : '') +
-      (c.vid ? '' : '<p class="src">Source: ' + esc(c.source || state.feed.source || state.feed.title) + '</p>') +
-      '<p class="hint">swipe up ↑</p></div></section>';
+      '<h2 class="ani" style="--d:1">' + esc(c.title) + '</h2><p class="txt ani" style="--d:2">' + esc(c.body) + '</p>' +
+      (c.visual ? '<div class="ani" style="--d:3">' + visualHtml(c.visual) + '</div>' : '') +
+      (c.example ? '<p class="ex ani" style="--d:4"><b>Example:</b> ' + esc(c.example) + '</p>' : '') +
+      byline(it) + '</div>' +
+      rail([railBtn('save', i, st.saved ? '❤️' : '♡', 'save', st.saved), railBtn('explain', i, '🔁', 'simpler'), c.vid ? railBtn('sound', i, '🔊', mmss(c.start || 0)) : '', railBtn('share', i, '↗', 'share')]) +
+      '<div class="sheet" hidden></div></section>';
   }
   // Little diagrams Claude picks for each video card: steps, timeline, compare or one big stat.
   function visualHtml(v){
@@ -414,52 +504,190 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
   function endCard(){
     return '<section class="card" data-end="1"><div class="panel p-end" id="endPanel"></div></section>';
   }
-  function wire(el){
-    el.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click', answer); });
-    el.querySelectorAll('[data-recall]').forEach(function(b){ b.addEventListener('click', recall); });
-    el.querySelectorAll('[data-watch]').forEach(function(b){ b.addEventListener('click', watchMoment); });
-    el.onscroll = function(){ clearTimeout(wire.t); wire.t = setTimeout(progress, 80); };
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(en){
-          var box = en.target;
-          if (en.isIntersecting && !box.firstChild) {
-            box.innerHTML = '<iframe src="https://www.youtube.com/embed/' + encodeURIComponent(box.dataset.yt) + '?start=' + box.dataset.start + '&end=' + box.dataset.end + '&rel=0&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin) + '" title="Video clip" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
-          } else if (!en.isIntersecting && box.firstChild) { box.innerHTML = ''; }
-        });
-      }, { root: el, rootMargin: '100% 0px' });
-      el.querySelectorAll('.clip').forEach(function(c){ io.observe(c); });
-    }
+
+  /* one click handler for everything inside the feed */
+  $('feed').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.classList.contains('opt')) return answer.call(b);
+    if (b.dataset.recall !== undefined) return recall.call(b);
+    var i = +b.dataset.i, it = state.items[i];
+    if (b.dataset.act === 'save') toggleSave(i, b);
+    if (b.dataset.act === 'explain') explain(i);
+    if (b.dataset.act === 'sound') sound(i, b);
+    if (b.dataset.act === 'share') share(it);
+    if (b.dataset.close !== undefined) b.closest('.sheet').hidden = true;
+  });
+  // double-tap a concept card to save it, like a TikTok like (dblclick on computers, two quick taps on phones)
+  var lastTap = { t: 0, card: null };
+  $('feed').addEventListener('pointerup', function(e){
+    if (e.pointerType !== 'touch') return;
+    var card = e.target.closest('.k-concept'), now = Date.now();
+    if (card && lastTap.card === card && now - lastTap.t < 320) { lastTap = { t: 0, card: null }; likeCard(e); }
+    else lastTap = { t: now, card: card };
+  });
+  $('feed').addEventListener('dblclick', likeCard);
+  function likeCard(e){
+    if (e.target.closest('button, .sheet')) return;
+    var card = e.target.closest('.k-concept'); if (!card) return;
+    var i = +card.dataset.i, btn = card.querySelector('[data-act=save]');
+    if (!btn.classList.contains('on')) toggleSave(i, btn);
+    var h = document.createElement('span'); h.className = 'burst'; h.textContent = '❤️'; card.appendChild(h);
+    setTimeout(function(){ h.remove(); }, 800);
   }
+  $('feed').addEventListener('scroll', function(){ clearTimeout(progress.t); progress.t = setTimeout(progress, 80); });
+
   function progress(){
     var el = $('feed'), cards = el.querySelectorAll('.card'), i = Math.round(el.scrollTop / el.clientHeight);
-    var total = cards.length - 1;
-    $('feedCount').textContent = Math.min(i + 1, total) + ' / ' + total;
-    $('barFill').style.width = Math.min(100, (i / Math.max(1, total)) * 100) + '%';
-    if (i >= total) renderEnd();
-    // Stop any "watch this moment" clip once its card scrolls away.
-    el.querySelectorAll('.moment').forEach(function(m){
-      if (m.hidden || m.closest('.card') === cards[i]) return;
-      m.innerHTML = ''; m.hidden = true; m.previousElementSibling.hidden = false;
+    var total = cards.length - (state.forYou ? 0 : 1);
+    if (state.forYou) {
+      $('feedCount').textContent = '∞';
+      if (i >= state.items.length - 3) moreForYou();
+    } else {
+      $('feedCount').textContent = Math.min(i + 1, total) + ' / ' + total;
+      $('barFill').style.width = Math.min(100, (i / Math.max(1, total)) * 100) + '%';
+      if (i >= total) renderEnd();
+    }
+    if (i !== state.active) {
+      state.active = i;
+      cards.forEach(function(c, k){ c.classList.toggle('on', k === i); });
+      el.querySelectorAll('.sheet').forEach(function(s){ s.hidden = true; });
+      playBg(i);
+    }
+    lazyClips(cards, i);
+  }
+  // Old-style clip cards (no-AI clipping): only embed the clip on the visible card and its neighbours.
+  function lazyClips(cards, i){
+    cards.forEach(function(card, k){
+      var box = card.querySelector('.clip'); if (!box) return;
+      var near = Math.abs(k - i) <= 1;
+      if (near && !box.firstChild) box.innerHTML = '<iframe src="https://www.youtube.com/embed/' + encodeURIComponent(box.dataset.yt) + '?start=' + box.dataset.start + '&end=' + box.dataset.end + '&rel=0&playsinline=1" title="Video clip" allow="autoplay; encrypted-media; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+      else if (!near && box.firstChild) box.innerHTML = '';
     });
   }
-  function watchMoment(){
-    var c = state.feed.cards[+this.dataset.watch], box = this.nextElementSibling;
-    box.innerHTML = '<div class="clip"><iframe src="https://www.youtube.com/embed/' + encodeURIComponent(c.vid) + '?start=' + (c.start || 0) + (c.end ? '&end=' + c.end : '') + '&autoplay=1&rel=0&playsinline=1" title="Video moment" allow="autoplay; encrypted-media; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>';
-    box.hidden = false; this.hidden = true;
+
+  /* ---------- the video moment playing behind a card ---------- */
+  function stopBg(){
+    if (!state || !state.player) return;
+    try { state.player.destroy(); } catch (e) {}
+    state.player = null; state.playerIdx = -1;
+    document.querySelectorAll('.yt').forEach(function(y){ y.innerHTML = ''; });
+    document.querySelectorAll('[data-act=sound]').forEach(function(b){ b.querySelector('.ic').textContent = '🔊'; });
   }
+  function clipRange(c){ var s = c.type === 'intro' ? 0 : (c.start || 0); return { s: s, e: c.type === 'intro' ? 45 : (c.end && c.end > s ? c.end : s + 60) }; }
+  function playBg(i){
+    stopBg();
+    var it = state.items[i]; if (!it || !it.c.vid || (it.c.type !== 'concept' && it.c.type !== 'intro')) return;
+    var host = $('feed').querySelectorAll('.card')[i].querySelector('.yt'), r = clipRange(it.c);
+    loadYT().then(function(){
+      if (!state || state.active !== i) return;
+      var div = document.createElement('div'); host.innerHTML = ''; host.appendChild(div);
+      state.playerIdx = i;
+      state.player = new YT.Player(div, {
+        videoId: it.c.vid,
+        playerVars: { autoplay: 1, mute: 1, controls: 0, start: r.s, end: r.e, playsinline: 1, rel: 0, disablekb: 1, fs: 0, iv_load_policy: 3 },
+        events: {
+          onReady: function(ev){ ev.target.mute(); ev.target.playVideo(); },
+          // loop just this moment
+          onStateChange: function(ev){ if (ev.data === YT.PlayerState.ENDED) { ev.target.seekTo(r.s, true); ev.target.playVideo(); } }
+        }
+      });
+    }).catch(function(){});
+  }
+  function sound(i, b){
+    var it = state.items[i], r = clipRange(it.c), p = state.player;
+    if (p && state.playerIdx === i && p.isMuted) {
+      if (p.isMuted()) { p.unMute(); p.setVolume(100); p.seekTo(r.s, true); p.playVideo(); b.querySelector('.ic').textContent = '🔇'; }
+      else { p.mute(); b.querySelector('.ic').textContent = '🔊'; }
+      return;
+    }
+    window.open('https://www.youtube.com/watch?v=' + encodeURIComponent(it.c.vid) + '&t=' + r.s + 's', '_blank', 'noopener');
+  }
+
+  /* ---------- side buttons ---------- */
+  function toggleSave(i, b){
+    var it = state.items[i], key = cardKey(it.f, it.c), st = cardState[key] || (cardState[key] = {});
+    st.saved = !st.saved;
+    b.classList.toggle('on', st.saved); b.setAttribute('aria-pressed', st.saved);
+    b.querySelector('.ic').textContent = st.saved ? '❤️' : '♡';
+    toast(st.saved ? 'Saved. It’ll come back in your For You feed ❤️' : 'Removed from your saved cards');
+    putState(it.f.id, it.c.id, { saved: st.saved });
+  }
+  function putState(feedKey, cardId, fields){
+    var row = Object.assign({ user_id: user.id, feed_key: String(feedKey).slice(0, 100), card_id: String(cardId).slice(0, 60), updated_at: new Date().toISOString() }, fields);
+    supabase.from('card_state').upsert(row, { onConflict: 'user_id,feed_key,card_id' }).then(function(r){ if (r.error) toast('Couldn’t save that. Check your connection.'); });
+  }
+  async function explain(i){
+    var it = state.items[i], c = it.c, sheet = $('feed').querySelectorAll('.card')[i].querySelector('.sheet'), st = cardState[cardKey(it.f, c)] || {};
+    var paint = function(x){ sheet.innerHTML = '<span class="kicker" style="color:var(--violet)">explained differently</span><p class="aha"><span aria-hidden="true">' + esc(x.emoji) + '</span> ' + esc(x.aha) + '</p><p>' + esc(x.text) + '</p><button type="button" class="btn btn-violet" data-close>got it</button>'; };
+    sheet.hidden = false;
+    if (st.explanation) return paint(st.explanation);
+    sheet.innerHTML = '<p class="aha">🤔 thinking of a better way to say it…</p>';
+    try {
+      var res = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (await accessToken()) }, body: JSON.stringify({ feed_key: it.f.id, card_id: c.id, title: c.title, body: c.body, example: c.example || '' }) });
+      var data = await res.json().catch(function(){ return {}; });
+      if (!res.ok || !data.explanation) throw new Error(data.error || 'Couldn’t explain it right now. Try again.');
+      (cardState[cardKey(it.f, c)] = cardState[cardKey(it.f, c)] || {}).explanation = data.explanation;
+      paint(data.explanation);
+    } catch (e) {
+      sheet.innerHTML = '<p>' + esc(e.message) + '</p><button type="button" class="btn btn-ghost" data-close>close</button>';
+    }
+  }
+  function share(it){
+    var c = it.c, url = location.origin + '/?src=share';
+    var text = c.type === 'quiz' ? 'Quick check: ' + c.question + ' 🤔 Revise with me on loop.' : (c.type === 'intro' ? (c.hook || it.f.title) : c.title + ': ' + c.body) + ' (via loop.)';
+    if (navigator.share) { navigator.share({ title: 'loop.', text: text, url: url }).catch(function(){}); return; }
+    window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank', 'noopener');
+  }
+
+  /* ---------- For You: an endless mix of every feed, with missed and saved cards coming back ---------- */
+  function isDue(f, c){
+    var st = cardState[cardKey(f, c)] || {}, run = lastRun[f.id];
+    return !!(st.saved || st.missed || (run && Array.isArray(run.missed) && run.missed.indexOf(c.id) > -1));
+  }
+  function shuffle(a){ for (var k = a.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)), t = a[k]; a[k] = a[j]; a[j] = t; } return a; }
+  function forYouBatch(){
+    var units = [];
+    myFeeds.map(rowToFeed).concat([DEMO]).forEach(function(f){
+      (f.cards || []).forEach(function(c){
+        if (c.type !== 'concept') return;
+        var quizzes = f.cards.filter(function(q){ return q.type === 'quiz' && q.about === c.id; });
+        units.push({ f: f, cards: [c].concat(quizzes), due: isDue(f, c) });
+      });
+    });
+    var due = shuffle(units.filter(function(u){ return u.due; })), fresh = shuffle(units.filter(function(u){ return !u.due; })), out = [];
+    // roughly every third card is one you missed or saved
+    while (due.length || fresh.length) out.push(due.length && (out.length % 3 === 2 || !fresh.length) ? due.shift() : fresh.shift());
+    var items = [];
+    out.forEach(function(u){ u.cards.forEach(function(c){ items.push({ c: c, f: u.f, again: u.due && c.type === 'concept' }); }); });
+    return items;
+  }
+  function openForYou(){
+    var items = forYouBatch();
+    if (!items.length) { toast('Make a feed first, or try the demo'); return; }
+    start(items, { feed: { id: 'for-you', title: 'For You' }, title: 'For You', forYou: true });
+  }
+  function moreForYou(){
+    var more = forYouBatch(), from = state.items.length;
+    state.items = state.items.concat(more);
+    $('feed').insertAdjacentHTML('beforeend', more.map(function(it, k){ return renderItem(it, from + k); }).join(''));
+  }
+
   function answer(){
-    var q = +this.dataset.q, k = +this.dataset.k, card = state.feed.cards[q];
+    var q = +this.dataset.q, k = +this.dataset.k, it = state.items[q], card = it.c;
     if (state.results[q] !== undefined) return;
     var ok = k === card.answer; state.results[q] = ok;
-    var panel = this.closest('.panel');
+    var panel = this.closest('.body, .panel');
     panel.querySelectorAll('.opt').forEach(function(b){ b.disabled = true; var kk = +b.dataset.k; if (kk === card.answer) b.classList.add('right'); else if (kk === k) b.classList.add('wrong'); });
     panel.querySelector('.explain').hidden = false;
-    panel.querySelector('.hint').textContent = ok ? 'nice. swipe up ↑' : 'saved for review. swipe up ↑';
-    if (!ok && card.about) state.missed.push(card.about);
+    panel.querySelector('.hint').textContent = ok ? 'nice. swipe up ↑' : 'it’ll come back later. swipe up ↑';
+    if (!ok && card.about && it.f === state.feed) state.missed.push(card.about);
+    if (card.about) {
+      var key = it.f.id + '|' + card.about, st = cardState[key] || (cardState[key] = {});
+      if (st.missed !== !ok) { st.missed = !ok; putState(it.f.id, card.about, { missed: !ok }); }
+    }
   }
   function recall(){
-    var i = +this.dataset.recall, c = state.feed.cards[i], v = this.dataset.v;
+    var i = +this.dataset.recall, c = state.items[i].c, v = this.dataset.v;
     state.results[i] = v === 'got';
     if (v === 'fuzzy') state.fuzzy.push(c);
     var note = document.querySelector('[data-note="' + i + '"]').value.trim();
@@ -483,6 +711,7 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
       '<span class="kicker" style="color:var(--violet)">feed done</span>' +
       (keys.length ? '<p class="score">' + right + '/' + keys.length + '</p><p>' + (isVideo ? 'parts you’re confident about' : 'quick checks right') + '</p>' : '<h2>nice<span class="dot">.</span></h2>') +
       (reviewBtn ? '<div>' + reviewBtn + '</div>' : '<p>Nothing to reinforce. You’re in the loop.</p>') +
+      '<div><button class="btn btn-ghost" id="toForYou">keep swiping in For You ∞</button></div>' +
       '<hr style="border:0;border-top:1px solid var(--line);width:100%">' +
       '<b>help us build loop. (10 sec)</b>' +
       '<label class="field"><span style="font-size:14px">How useful was this? (1 = not at all, 5 = very)</span><div class="rate" id="rateUse">' + [1,2,3,4,5].map(function(n){ return '<button type="button" data-v="' + n + '" aria-pressed="false">' + n + '</button>'; }).join('') + '</div></label>' +
@@ -493,7 +722,8 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
     ['rateUse', 'rateAgain'].forEach(function(id){
       $(id).addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; this.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', x === b); }); });
     });
-    $('toHome').addEventListener('click', function(){ show('home'); });
+    $('toHome').addEventListener('click', function(){ closeFeed(); });
+    $('toForYou').addEventListener('click', function(){ openForYou(); });
     $('sendFb').addEventListener('click', function(){ sendFeedback(right, keys.length, this); });
     var rv = $('doReview');
     if (rv) rv.addEventListener('click', function(){
@@ -527,7 +757,8 @@ import { supabase, configured, currentUser, accessToken, logout } from '/js/supa
       .then(function(){ btn.textContent = 'thank you 💜'; toast('Feedback sent. Thank you!'); })
       .catch(function(){ btn.disabled = false; btn.textContent = 'send feedback'; toast('Couldn’t send. Check your connection.'); });
   }
-  $('closeFeed').addEventListener('click', function(){ show('home'); });
+  function closeFeed(){ stopBg(); show('home'); renderMine(); }
+  $('closeFeed').addEventListener('click', closeFeed);
 
   /* ---------- video clipping ---------- */
   function ytId(u){

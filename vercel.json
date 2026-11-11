@@ -6,6 +6,9 @@
     },
     "api/video.js": {
       "maxDuration": 120
+    },
+    "api/explain.js": {
+      "maxDuration": 60
     }
   },
   "headers": [
